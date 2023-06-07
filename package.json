@@ -1,0 +1,26 @@
+{
+  "name": "graphqlserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "dependencies": {
+    "@apollo/server": "^4.7.1",
+    "@graphql-mesh/mysql": "^0.94.1",
+    "@graphql-tools/schema": "^10.0.0",
+    "dotenv": "^16.1.4",
+    "graphql": "^16.6.0",
+    "graphql-mesh": "^0.0.1",
+    "graphql-tools": "^9.0.0",
+    "mysql2": "^3.3.3",
+    "sequelize": "^6.32.0"
+  }
+}
