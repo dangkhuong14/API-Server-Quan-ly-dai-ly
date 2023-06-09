@@ -6,7 +6,8 @@ import resolvers from './graphql/resolvers.js';
 
 const server = new ApolloServer({
     typeDefs, resolvers,
-    context: { pool }
+    context: { pool },
+    introspection: true
 });
 
 startStandaloneServer(server, { listen: { port: process.env.PORT || 5000 }, }).then(({ url }) => {
