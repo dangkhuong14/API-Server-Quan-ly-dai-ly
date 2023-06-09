@@ -133,7 +133,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    addDaily(TenDaiLy: String!, DienThoai: String!, DiaChi: String!, NgayTiepNhan: String!, TienNo: Int, Email: String, MaQuan: ID!, MaLoaiDaiLy: ID!): Daily
+    addDaily(TenDaiLy: String!, DienThoai: String!, DiaChi: String!, NgayTiepNhan: String, TienNo: Int, Email: String, MaQuan: ID!, MaLoaiDaiLy: ID!): Daily
     updateDaily(MaDaiLy: ID!, TenDaiLy: String!, DienThoai: String!, DiaChi: String!, NgayTiepNhan: String!, TienNo: Int, Email: String, MaQuan: ID!, MaLoaiDaiLy: ID!): Daily
     deleteDaily(MaDaiLy: ID!): Daily
 
@@ -157,7 +157,7 @@ const typeDefs = gql`
     updateMathang(MaMatHang: ID!, TenMatHang: String!, SoLuongTon: Int!, DonGiaNhap: Int!, MaDVT: ID!): Mathang
     deleteMathang(MaMatHang: ID!): Mathang
 
-    addPhieuxuathang(NgayLapPhieu: String!, TongTien: Int!, MaDaiLy: ID!): Phieuxuathang
+    addPhieuxuathang(NgayLapPhieu: String, TongTien: Int!, MaDaiLy: ID!): Phieuxuathang
     updatePhieuxuathang(MaPhieuXuat: ID!, NgayLapPhieu: String!, TongTien: Int!, MaDaiLy: ID!): Phieuxuathang
     deletePhieuxuathang(MaPhieuXuat: ID!): Phieuxuathang
 
@@ -173,7 +173,7 @@ const typeDefs = gql`
     updateCt_bcds(MaCT_BCDS: ID, MaBaoCaoDoanhSo: ID!, MaDaiLy: ID!, SoPhieuXuat: Int!, TongTriGia: Int!, Tyle: Int!): Ct_bcds
     deleteCt_bcds(MaCT_BCDS: ID): Ct_bcds
 
-    addPhieuthutien(MaDaiLy: ID!, NgayThuTien: String!, SoTienThu: Int!): Phieuthutien
+    addPhieuthutien(MaDaiLy: ID!, NgayThuTien: String, SoTienThu: Int!): Phieuthutien
     updatePhieuthutien(MaPhieuThuTien: ID, MaDaiLy: ID!, NgayThuTien: String!, SoTienThu: Int!): Phieuthutien
     deletePhieuthutien(MaPhieuThuTien: ID): Phieuthutien
 

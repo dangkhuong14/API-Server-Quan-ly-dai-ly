@@ -1,5 +1,6 @@
 import pool from "../database/pool.js";
 import initModels from "../../models/init-models.js";
+import moment from 'moment'
 
 const { DAILY, CT_BCCN, DVT, LOAIDAILY,
     QUAN, MATHANG, CT_PHIEUXUATHANG,
@@ -12,20 +13,25 @@ const resolvers = {
     /* ----------------------Custom resolvers------------------------ */
 
     Daily: {
+        NgayTiepNhan: (parent) => {
+            // Convert timestamp into string
+            const formattedTimestamp = moment(parent.NgayTiepNhan).format('YYYY-MM-DD HH:mm:ss');
+            return formattedTimestamp
+        },
         relatedQuan: async (parent, args) => {
             const sql = `SELECT * FROM QUAN WHERE MaQuan = '${parent.MaQuan}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
         },
         relatedLoaidaily: async (parent, args) => {
-            const sql = `SELECT * FROM Loaidaily WHERE MaLoaiDaiLy = '${parent.MaLoaiDaiLy}';`;
+            const sql = `SELECT * FROM LOAIDAILY WHERE MaLoaiDaiLy = '${parent.MaLoaiDaiLy}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
@@ -36,7 +42,7 @@ const resolvers = {
             const sql = `SELECT * FROM MATHANG WHERE MaMatHang = '${parent.MaMatHang}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
@@ -47,18 +53,23 @@ const resolvers = {
             const sql = `SELECT * FROM DVT WHERE MaDVT = '${parent.MaDVT}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
         }
     },
     Phieuxuathang: {
+        NgayLapPhieu: (parent) => {
+            // Convert timestamp into string
+            const formattedTimestamp = moment(parent.NgayLapPhieu).format('YYYY-MM-DD HH:mm:ss');
+            return formattedTimestamp
+        },
         relatedDaily: async (parent, args) => {
             const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
@@ -69,7 +80,7 @@ const resolvers = {
             const sql = `SELECT * FROM PHIEUXUATHANG WHERE MaPhieuXuat = '${parent.MaPhieuXuat}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
@@ -78,10 +89,16 @@ const resolvers = {
             const sql = `SELECT * FROM MATHANG WHERE MaMatHang = '${parent.MaMatHang}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
+        }
+    },
+    Baocaodoanhso: {
+        Thang: (parent) => {
+            const formattedDate = moment(parent.Thang).format('YYYY-MM-DD');
+            return formattedDate;
         }
     },
     Ct_bcds: {
@@ -89,7 +106,7 @@ const resolvers = {
             const sql = `SELECT * FROM BAOCAODOANHSO WHERE MaBaoCaoDoanhSo = '${parent.MaBaoCaoDoanhSo}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
@@ -98,21 +115,32 @@ const resolvers = {
             const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
         }
     },
     Phieuthutien: {
+        NgayThuTien: (parent) => {
+            // Convert timestamp into string
+            const formattedTimestamp = moment(parent.NgayThuTien).format('YYYY-MM-DD HH:mm:ss');
+            return formattedTimestamp
+        },
         relatedDaily: async (parent, args) => {
             const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
+        }
+    },
+    Baocaocongno: {
+        Thang: (parent) => {
+            const formattedDate = moment(parent.Thang).format('YYYY-MM-DD');
+            return formattedDate;
         }
     },
     Ct_bccn: {
@@ -120,7 +148,7 @@ const resolvers = {
             const sql = `SELECT * FROM BAOCAOCONGNO WHERE MaBaoCaoCongNo = '${parent.MaBaoCaoCongNo}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
@@ -129,7 +157,7 @@ const resolvers = {
             const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
             try {
                 const res = await pool.query(sql);
-                return res[0];
+                return res[0][0];
             } catch (err) {
                 return console.log('Error: ', err);
             }
@@ -470,12 +498,25 @@ const resolvers = {
 
     Mutation: {
         addDaily: async (parent, args) => {
+            const { NgayTiepNhan } = args;
+            let newDaiLy
+
+            // Chuyển đổi giá trị timestamp từ dạng string sang dạng timestamp
+            const convertedTimestamp = moment(NgayTiepNhan).toDate();
+
             try {
-                const newLoaidaily = await DAILY.create(args);
-                return newLoaidaily;
+                // Kiểm tra nếu phía client cung cấp giá trị cho NgayTiepNhan
+                if (NgayTiepNhan) {
+                    newDaiLy = await DAILY.create({ NgayTiepNhan: convertedTimestamp, ...args });
+                    return newDaiLy;
+                } else {
+                    newDaiLy = await DAILY.create(args);
+                    return newDaiLy;
+                }
+
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to add DAILY')
+                throw new Error(`Failed to add DAILY: ${error}`)
             }
 
         },
@@ -509,12 +550,13 @@ const resolvers = {
             }
         },
         addBaocaocongno: async (parent, args) => {
+            const parsedDate = moment(args.Thang, 'YYYY-MM-DD').toDate();
             try {
-                const newLoaidaily = await BAOCAOCONGNO.create(args);
+                const newLoaidaily = await BAOCAOCONGNO.create({ Thang: parsedDate });
                 return newLoaidaily;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to add BAOCAOCONGNO')
+                throw new Error(`Failed to add BAOCAOCONGNO: ${error}`);
             }
         },
         updateBaocaocongno: async (parent, args) => {
@@ -775,12 +817,25 @@ const resolvers = {
             }
         },
         addPhieuxuathang: async (parent, args) => {
+            const { NgayLapPhieu } = args;
+            let newPhieuXuatHang
+
+            // Chuyển đổi giá trị timestamp từ dạng string sang dạng timestamp
+            const convertedTimestamp = moment(NgayLapPhieu).toDate();
+
             try {
-                const newLoaidaily = await PHIEUXUATHANG.create(args);
-                return newLoaidaily;
+                // Kiểm tra nếu phía client cung cấp giá trị cho NgayLapPhieu
+                if (NgayLapPhieu) {
+                    newPhieuXuatHang = await PHIEUXUATHANG.create({ NgayLapPhieu: convertedTimestamp, ...args });
+                    return newPhieuXuatHang;
+                } else {
+                    newPhieuXuatHang = await PHIEUXUATHANG.create(args);
+                    return newPhieuXuatHang;
+                }
+
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to add PHIEUXUATHANG')
+                throw new Error(`Failed to add PHIEUXUATHANG: ${error}`)
             }
         },
         updatePhieuxuathang: async (parent, args) => {
@@ -851,12 +906,13 @@ const resolvers = {
             }
         },
         addBaocaodoanhso: async (parent, args) => {
+            const parsedDate = moment(args.Thang, 'YYYY-MM-DD').toDate();
             try {
-                const newLoaidaily = await BAOCAODOANHSO.create(args);
+                const newLoaidaily = await BAOCAODOANHSO.create({ Thang: parsedDate });
                 return newLoaidaily;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to add BAOCAODOANHSO')
+                throw new Error(`Failed to add BAOCAODOANHSO: ${error}`);
             }
         },
         updateBaocaodoanhso: async (parent, args) => {
@@ -927,12 +983,25 @@ const resolvers = {
             }
         },
         addPhieuthutien: async (parent, args) => {
+            const { NgayThuTien } = args;
+            let newPhieuThuTien
+
+            // Chuyển đổi giá trị timestamp từ dạng string sang dạng timestamp
+            const convertedTimestamp = moment(NgayThuTien).toDate();
+
             try {
-                const newLoaidaily = await PHIEUTHUTIEN.create(args);
-                return newLoaidaily;
+                // Kiểm tra nếu phía client cung cấp giá trị cho NgayThuTien
+                if (NgayThuTien) {
+                    newPhieuThuTien = await PHIEUTHUTIEN.create({ NgayThuTien: convertedTimestamp, ...args });
+                    return newPhieuThuTien;
+                } else {
+                    newPhieuThuTien = await PHIEUTHUTIEN.create(args);
+                    return newPhieuThuTien;
+                }
+
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to add PHIEUTHUTIEN')
+                throw new Error(`Failed to add PHIEUTHUTIEN: ${error}`)
             }
         },
         updatePhieuthutien: async (parent, args) => {

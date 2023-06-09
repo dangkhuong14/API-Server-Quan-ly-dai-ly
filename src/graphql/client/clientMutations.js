@@ -1,7 +1,7 @@
 import { gql } from 'apollo-boost';
 
 const addDailyMutation = gql`
-  mutation($TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String!, $TienNo: Int, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
+  mutation($TenDaiLy: String!, $DienThoai: String!, $DiaChi: String!, $NgayTiepNhan: String, $TienNo: Int, $Email: String, $MaQuan: ID!, $MaLoaiDaiLy: ID!) {
     addDaily(TenDaiLy: $TenDaiLy, DienThoai: $DienThoai, DiaChi: $DiaChi, NgayTiepNhan: $NgayTiepNhan, TienNo: $TienNo, Email: $Email, MaQuan: $MaQuan, MaLoaiDaiLy: $MaLoaiDaiLy) {
       MaDaiLy
       TenDaiLy
@@ -199,7 +199,7 @@ const deleteMathangMutation = gql`
 `
 
 const addPhieuxuathangMutation = gql`
-  mutation($NgayLapPhieu: String!, $TongTien: Int!, $MaDaiLy: ID!) {
+  mutation($NgayLapPhieu: String, $TongTien: Int!, $MaDaiLy: ID!) {
     addPhieuxuathang(NgayLapPhieu: $NgayLapPhieu, TongTien: $TongTien, MaDaiLy: $MaDaiLy) {
       MaPhieuXuat
       NgayLapPhieu
@@ -328,7 +328,7 @@ const deleteCt_bcdsMutation = gql`
 `
 
 const addPhieuthutienMutation = gql`
-  mutation($MaDaiLy: ID!, $NgayThuTien: String!, $SoTienThu: Int!) {
+  mutation($MaDaiLy: ID!, $NgayThuTien: String, $SoTienThu: Int!) {
     addPhieuthutien(MaDaiLy: $MaDaiLy, NgayThuTien: $NgayThuTien, SoTienThu: $SoTienThu) {
       MaPhieuThuTien
       MaDaiLy
@@ -427,43 +427,43 @@ const deleteCt_bccnMutation = gql`
 `
 
 export {
-    addDailyMutation,
-    updateDailyMutation,
-    deleteDailyMutation,
-    addQuanMutation,
-    updateQuanMutation,
-    deleteQuanMutation,
-    addLoaidailyMutation,
-    updateLoaidailyMutation,
-    deleteLoaidailyMutation,
-    addDvtMutation,
-    updateDvtMutation,
-    deleteDvtMutation,
-    addPhieunhaphangMutation,
-    updatePhieunhaphangMutation,
-    deletePhieunhaphangMutation,
-    addMathangMutation,
-    updateMathangMutation,
-    deleteMathangMutation,
-    addPhieuxuathangMutation,
-    updatePhieuxuathangMutation,
-    deletePhieuxuathangMutation,
-    addCt_phieuxuathangMutation,
-    updateCt_phieuxuathangMutation,
-    deleteCt_phieuxuathangMutation,
-    addBaocaodoanhsoMutation,
-    updateBaocaodoanhsoMutation,
-    deleteBaocaodoanhsoMutation,
-    addCt_bcdsMutation,
-    updateCt_bcdsMutation,
-    deleteCt_bcdsMutation,
-    addPhieuthutienMutation,
-    updatePhieuthutienMutation,
-    deletePhieuthutienMutation,
-    addBaocaocongnoMutation,
-    updateBaocaocongnoMutation,
-    deleteBaocaocongnoMutation,
-    addCt_bccnMutation,
-    updateCt_bccnMutation,
-    deleteCt_bccnMutation,
+  addDailyMutation,
+  updateDailyMutation,
+  deleteDailyMutation,
+  addQuanMutation,
+  updateQuanMutation,
+  deleteQuanMutation,
+  addLoaidailyMutation,
+  updateLoaidailyMutation,
+  deleteLoaidailyMutation,
+  addDvtMutation,
+  updateDvtMutation,
+  deleteDvtMutation,
+  addPhieunhaphangMutation,
+  updatePhieunhaphangMutation,
+  deletePhieunhaphangMutation,
+  addMathangMutation,
+  updateMathangMutation,
+  deleteMathangMutation,
+  addPhieuxuathangMutation,
+  updatePhieuxuathangMutation,
+  deletePhieuxuathangMutation,
+  addCt_phieuxuathangMutation,
+  updateCt_phieuxuathangMutation,
+  deleteCt_phieuxuathangMutation,
+  addBaocaodoanhsoMutation,
+  updateBaocaodoanhsoMutation,
+  deleteBaocaodoanhsoMutation,
+  addCt_bcdsMutation,
+  updateCt_bcdsMutation,
+  deleteCt_bcdsMutation,
+  addPhieuthutienMutation,
+  updatePhieuthutienMutation,
+  deletePhieuthutienMutation,
+  addBaocaocongnoMutation,
+  updateBaocaocongnoMutation,
+  deleteBaocaocongnoMutation,
+  addCt_bccnMutation,
+  updateCt_bccnMutation,
+  deleteCt_bccnMutation,
 };
