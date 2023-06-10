@@ -168,7 +168,7 @@ const resolvers = {
 
     Query: {
         everyDaily: async () => {
-            const sql = `SELECT * FROM CT_BCCN;`;
+            const sql = `SELECT * FROM DAILY;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
@@ -218,7 +218,7 @@ const resolvers = {
             }
         },
         everyLoaidaily: async () => {
-            const sql = `SELECT * FROM LOAICT_BCCN;`;
+            const sql = `SELECT * FROM LOAIDAILY;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
