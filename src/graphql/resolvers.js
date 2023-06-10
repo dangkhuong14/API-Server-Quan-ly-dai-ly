@@ -1,6 +1,7 @@
 import pool from "../database/pool.js";
 import initModels from "../../models/init-models.js";
 import moment from 'moment'
+import { Sequelize } from "sequelize";
 
 const { DAILY, CT_BCCN, DVT, LOAIDAILY,
     QUAN, MATHANG, CT_PHIEUXUATHANG,
@@ -167,6 +168,25 @@ const resolvers = {
     /* ----------------------Query resolvers------------------------ */
 
     Query: {
+        allPXHByThang: async (_, args) => {
+            const { Thang } = args;
+            try {
+                const startDate = moment(Thang, "YYYY-MM").startOf('month').toDate();
+                const endDate = moment(Thang, "YYYY-MM").endOf('month').toDate();
+
+                const result = await PHIEUXUATHANG.findAll({
+                    where: {
+                        NgayLapPhieu: {
+                            [Sequelize.Op.between]: [startDate, endDate]
+                        }
+                    }
+                });
+                return result
+            } catch (error) {
+                console.log('Error: ', error);
+                throw new Error(`Failed to find Phieuxuathang by Thang: ${error}`);
+            }
+        },
         ct_bcdsByTenDLAndThang: async (_, args) => {
             const { TenDaiLy, Thang } = args
             const result = await CT_BCDS.findAll({
@@ -225,7 +245,7 @@ const resolvers = {
                 }
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to find DAILY by MaDaiLy');
+                throw new Error(`Failed to find DAILY by MaDaiLy: ${error}`);
             }
         },
         everyQuan: async () => {

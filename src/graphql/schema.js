@@ -104,32 +104,47 @@ const typeDefs = gql`
   }
 
   type Query {
+    allPXHByThang(Thang: String!): [Phieuxuathang]
+
     ct_bcdsByTenDLAndThang(TenDaiLy: String!, Thang: String!): [Ct_bcds]
     ct_bccnByTenDLAndThang(TenDaiLy: String!, Thang: String!): [Ct_bccn]
+
     everyDaily: [Daily]
     daily(MaDaiLy: ID!): Daily
+
     everyQuan: [Quan]
     quan(MaQuan: ID!): Quan
+
     everyLoaidaily: [Loaidaily]
     loaidaily(MaLoaiDaiLy: ID!): Loaidaily
+
     everyDvt: [Dvt]
     dvt(MaDVT: ID!): Dvt
+
     everyPhieunhaphang: [Phieunhaphang]
     phieunhaphang(MaPhieuNhap: ID!): Phieunhaphang
+
     everyMathang: [Mathang]
     mathang(MaMatHang: ID!): Mathang
+
     everyPhieuxuathang: [Phieuxuathang]
     phieuxuathang(MaPhieuXuat: ID!): Phieuxuathang
+
     everyCt_phieuxuathang: [Ct_phieuxuathang]
     ct_phieuxuathang(MaCT_PXH: ID!): Ct_phieuxuathang
+
     everyBaocaodoanhso: [Baocaodoanhso]
     baocaodoanhso(MaBaoCaoDoanhSo: ID!): Baocaodoanhso
+
     everyCt_bcds: [Ct_bcds]
     ct_bcds(MaCT_BCDS: ID!): Ct_bcds
+
     everyPhieuthutien: [Phieuthutien]
     phieuthutien(MaPhieuThu: ID!): Phieuthutien
+
     everyBaocaocongno: [Baocaocongno]
     baocaocongno(MaBaoCaoCongNo: ID!): Baocaocongno
+
     everyCt_bccn: [Ct_bccn]
     ct_bccn(MaCT_BCCN: ID!): Ct_bccn
   }
