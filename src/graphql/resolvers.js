@@ -167,6 +167,42 @@ const resolvers = {
     /* ----------------------Query resolvers------------------------ */
 
     Query: {
+        ct_bcdsByTenDLAndThang: async (_, args) => {
+            const { TenDaiLy, Thang } = args
+            const result = await CT_BCDS.findAll({
+                include: [
+                    {
+                        model: DAILY,
+                        as: 'MaDaiLy_DAILY',
+                        where: { TenDaiLy },
+                    },
+                    {
+                        model: BAOCAODOANHSO,
+                        as: 'MaBaoCaoDoanhSo_BAOCAODOANHSO',
+                        where: { Thang },
+                    },
+                ],
+            });
+            return result
+        },
+        ct_bccnByTenDLAndThang: async (_, args) => {
+            const { TenDaiLy, Thang } = args
+            const result = await CT_BCCN.findAll({
+                include: [
+                    {
+                        model: DAILY,
+                        as: 'MaDaiLy_DAILY',
+                        where: { TenDaiLy },
+                    },
+                    {
+                        model: BAOCAOCONGNO,
+                        as: 'MaBaoCaoCongNo_BAOCAOCONGNO',
+                        where: { Thang },
+                    },
+                ],
+            });
+            return result
+        },
         everyDaily: async () => {
             const sql = `SELECT * FROM DAILY;`;
             try {
@@ -946,11 +982,11 @@ const resolvers = {
         },
         addCt_bcds: async (parent, args) => {
             try {
-                const newLoaidaily = await CT_BCDS.create(args);
-                return newLoaidaily;
+                const newCT_BCDS = await CT_BCDS.create(args);
+                return newCT_BCDS;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to add CT_BCDS')
+                throw new Error(`Failed to add CT_BCDS: ${error}`)
             }
         },
         updateCt_bcds: async (parent, args) => {

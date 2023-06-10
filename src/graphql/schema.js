@@ -76,7 +76,7 @@ const typeDefs = gql`
     relatedDaily: Daily
     SoPhieuXuat: Int!
     TongTriGia: Int!
-    Tyle: Int!
+    TyLe: Int!
   }
 
   type Phieuthutien {
@@ -104,6 +104,8 @@ const typeDefs = gql`
   }
 
   type Query {
+    ct_bcdsByTenDLAndThang(TenDaiLy: String!, Thang: String!): [Ct_bcds]
+    ct_bccnByTenDLAndThang(TenDaiLy: String!, Thang: String!): [Ct_bccn]
     everyDaily: [Daily]
     daily(MaDaiLy: ID!): Daily
     everyQuan: [Quan]
@@ -169,8 +171,8 @@ const typeDefs = gql`
     updateBaocaodoanhso(MaBaoCaoDoanhSo: ID, Thang: String!): Baocaodoanhso
     deleteBaocaodoanhso(MaBaoCaoDoanhSo: ID): Baocaodoanhso
 
-    addCt_bcds(MaBaoCaoDoanhSo: ID!, MaDaiLy: ID!, SoPhieuXuat: Int!, TongTriGia: Int!, Tyle: Int!): Ct_bcds
-    updateCt_bcds(MaCT_BCDS: ID, MaBaoCaoDoanhSo: ID!, MaDaiLy: ID!, SoPhieuXuat: Int!, TongTriGia: Int!, Tyle: Int!): Ct_bcds
+    addCt_bcds(MaBaoCaoDoanhSo: ID!, MaDaiLy: ID!, SoPhieuXuat: Int!, TongTriGia: Int!, TyLe: Int!): Ct_bcds
+    updateCt_bcds(MaCT_BCDS: ID, MaBaoCaoDoanhSo: ID!, MaDaiLy: ID!, SoPhieuXuat: Int!, TongTriGia: Int!, TyLe: Int!): Ct_bcds
     deleteCt_bcds(MaCT_BCDS: ID): Ct_bcds
 
     addPhieuthutien(MaDaiLy: ID!, NgayThuTien: String, SoTienThu: Int!): Phieuthutien
