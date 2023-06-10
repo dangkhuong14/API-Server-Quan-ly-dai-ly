@@ -168,6 +168,15 @@ const resolvers = {
     /* ----------------------Query resolvers------------------------ */
 
     Query: {
+        thamso: async () => {
+            const sql = `SELECT * FROM THAMSO;`;
+            try {
+                const res = await pool.query(sql);
+                return res[0][0];
+            } catch (err) {
+                return console.log('Error: ', err);
+            }
+        },
         allPXHByThang: async (_, args) => {
             const { Thang } = args;
             try {
@@ -553,6 +562,34 @@ const resolvers = {
     /* ----------------------Mutation resolvers------------------------ */
 
     Mutation: {
+        updateThamso: async (_, args) => {
+            const { SoLuongLoaiDaiLy, SoDaiLyToiDaTrongQuan, SoLuongMatHang, SoLuongDVT } = args;
+
+            let updateQuery = 'UPDATE THAMSO SET ';
+            const updateFields = [];
+
+            if (SoLuongLoaiDaiLy !== undefined) {
+                updateFields.push(`SoLuongLoaiDaiLy = ${SoLuongLoaiDaiLy}`);
+            }
+            if (SoDaiLyToiDaTrongQuan !== undefined) {
+                updateFields.push(`SoDaiLyToiDaTrongQuan = ${SoDaiLyToiDaTrongQuan}`);
+            }
+            if (SoLuongMatHang !== undefined) {
+                updateFields.push(`SoLuongMatHang = ${SoLuongMatHang}`);
+            }
+            if (SoLuongDVT !== undefined) {
+                updateFields.push(`SoLuongDVT = ${SoLuongDVT}`);
+            }
+
+            if (updateFields.length === 0) {
+                throw new Error('Không có tham số nào để cập nhật.');
+            }
+
+            updateQuery += updateFields.join(', ');
+            await pool.query(updateQuery)
+            const res = await pool.query('SELECT * FROM THAMSO')
+            return res[0][0]
+        },
         addDaily: async (parent, args) => {
             const { NgayTiepNhan } = args;
             let newDaiLy

@@ -103,7 +103,17 @@ const typeDefs = gql`
     NoCuoi: Int!
   }
 
+  type Thamso {
+    MaThamSo: ID
+    SoLuongLoaiDaiLy: Int!
+    SoDaiLyToiDaTrongQuan: Int!
+    SoLuongMatHang: Int!
+    SoLuongDVT: Int!
+  }
+
   type Query {
+    thamso: Thamso
+
     allPXHByThang(Thang: String!): [Phieuxuathang]
 
     ct_bcdsByTenDLAndThang(TenDaiLy: String!, Thang: String!): [Ct_bcds]
@@ -150,6 +160,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
+    updateThamso(SoLuongLoaiDaiLy: Int, SoDaiLyToiDaTrongQuan: Int, SoLuongMatHang: Int, SoLuongDVT: Int): Thamso
+
     addDaily(TenDaiLy: String!, DienThoai: String!, DiaChi: String!, NgayTiepNhan: String, TienNo: Float, Email: String, MaQuan: ID!, MaLoaiDaiLy: ID!): Daily
     updateDaily(MaDaiLy: ID!, TenDaiLy: String!, DienThoai: String!, DiaChi: String!, NgayTiepNhan: String!, TienNo: Float, Email: String, MaQuan: ID!, MaLoaiDaiLy: ID!): Daily
     deleteDaily(MaDaiLy: ID!): Daily
