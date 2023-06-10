@@ -268,7 +268,7 @@ const resolvers = {
             }
         },
         everyPhieunhaphang: async () => {
-            const sql = `SELECT * FROM "PHIEUNHAPHANG";`;
+            const sql = `SELECT * FROM PHIEUNHAPHANG;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
@@ -293,7 +293,7 @@ const resolvers = {
             }
         },
         everyMathang: async () => {
-            const sql = `SELECT * FROM "MATHANG";`;
+            const sql = `SELECT * FROM MATHANG;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
@@ -318,7 +318,7 @@ const resolvers = {
             }
         },
         everyPhieuxuathang: async () => {
-            const sql = `SELECT * FROM "PHIEUXUATHANG";`;
+            const sql = `SELECT * FROM PHIEUXUATHANG;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
@@ -343,7 +343,7 @@ const resolvers = {
             }
         },
         everyCt_phieuxuathang: async () => {
-            const sql = `SELECT * FROM "CT_PHIEUXUATHANG";`;
+            const sql = `SELECT * FROM CT_PHIEUXUATHANG;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
@@ -368,7 +368,7 @@ const resolvers = {
             }
         },
         everyBaocaodoanhso: async () => {
-            const sql = `SELECT * FROM "BAOCAODOANHSO";`;
+            const sql = `SELECT * FROM BAOCAODOANHSO;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
@@ -393,7 +393,7 @@ const resolvers = {
             }
         },
         everyCt_bcds: async () => {
-            const sql = `SELECT * FROM "CT_BCDS";`;
+            const sql = `SELECT * FROM CT_BCDS;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
@@ -418,7 +418,7 @@ const resolvers = {
             }
         },
         everyPhieuthutien: async () => {
-            const sql = `SELECT * FROM "PHIEUTHUTIEN";`;
+            const sql = `SELECT * FROM PHIEUTHUTIEN;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
@@ -443,7 +443,7 @@ const resolvers = {
             }
         },
         everyBaocaocongno: async () => {
-            const sql = `SELECT * FROM "BAOCAOCONGNO";`;
+            const sql = `SELECT * FROM BAOCAOCONGNO;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
@@ -468,7 +468,7 @@ const resolvers = {
             }
         },
         everyCt_bccn: async () => {
-            const sql = `SELECT * FROM "CT_BCCN";`;
+            const sql = `SELECT * FROM CT_BCCN;`;
             try {
                 const res = await pool.query(sql);
                 return res[0];
