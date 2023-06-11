@@ -109,6 +109,8 @@ const typeDefs = gql`
     SoDaiLyToiDaTrongQuan: Int!
     SoLuongMatHang: Int!
     SoLuongDVT: Int!
+    SoTienThuKhongVuotQuaSoTienDaiLyDangNo: Int!
+    TyLeDonGiaXuat: Float!
   }
 
   type Query {
@@ -160,7 +162,7 @@ const typeDefs = gql`
   }
 
   type Mutation {
-    updateThamso(SoLuongLoaiDaiLy: Int, SoDaiLyToiDaTrongQuan: Int, SoLuongMatHang: Int, SoLuongDVT: Int): Thamso
+    updateThamso(SoLuongLoaiDaiLy: Int, SoDaiLyToiDaTrongQuan: Int, SoLuongMatHang: Int, SoLuongDVT: Int, SoTienThuKhongVuotQuaSoTienDaiLyDangNo: Int, TyLeDonGiaXuat: Float): Thamso
 
     addDaily(TenDaiLy: String!, DienThoai: String!, DiaChi: String!, NgayTiepNhan: String, TienNo: Float, Email: String, MaQuan: ID!, MaLoaiDaiLy: ID!): Daily
     updateDaily(MaDaiLy: ID!, TenDaiLy: String!, DienThoai: String!, DiaChi: String!, NgayTiepNhan: String!, TienNo: Float, Email: String, MaQuan: ID!, MaLoaiDaiLy: ID!): Daily

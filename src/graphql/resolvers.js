@@ -563,7 +563,8 @@ const resolvers = {
 
     Mutation: {
         updateThamso: async (_, args) => {
-            const { SoLuongLoaiDaiLy, SoDaiLyToiDaTrongQuan, SoLuongMatHang, SoLuongDVT } = args;
+            const { SoLuongLoaiDaiLy, SoDaiLyToiDaTrongQuan, SoLuongMatHang, SoLuongDVT,
+                SoTienThuKhongVuotQuaSoTienDaiLyDangNo, TyLeDonGiaXuat } = args;
 
             let updateQuery = 'UPDATE THAMSO SET ';
             const updateFields = [];
@@ -579,6 +580,12 @@ const resolvers = {
             }
             if (SoLuongDVT !== undefined) {
                 updateFields.push(`SoLuongDVT = ${SoLuongDVT}`);
+            }
+            if (SoTienThuKhongVuotQuaSoTienDaiLyDangNo !== undefined) {
+                updateFields.push(`SoTienThuKhongVuotQuaSoTienDaiLyDangNo = ${SoTienThuKhongVuotQuaSoTienDaiLyDangNo}`);
+            }
+            if (TyLeDonGiaXuat !== undefined) {
+                updateFields.push(`TyLeDonGiaXuat = ${TyLeDonGiaXuat}`);
             }
 
             if (updateFields.length === 0) {
