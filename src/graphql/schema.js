@@ -114,6 +114,8 @@ const typeDefs = gql`
   }
 
   type Query {
+    everyMatHangByArrOfMaMatHang(MaMatHangArr: [ID!]! ): [Mathang]
+
     thamso: Thamso
 
     allPXHByThang(Thang: String!): [Phieuxuathang]

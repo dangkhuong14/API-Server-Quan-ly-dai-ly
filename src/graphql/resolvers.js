@@ -168,6 +168,20 @@ const resolvers = {
     /* ----------------------Query resolvers------------------------ */
 
     Query: {
+        everyMatHangByArrOfMaMatHang: async (_, { MaMatHangArr }) => {
+            try {
+                const danhSach = await MATHANG.findAll({
+                    where: {
+                        MaMatHang: {
+                            [Sequelize.Op.in]: MaMatHangArr
+                        }
+                    }
+                });
+                return danhSach;
+            } catch (error) {
+                throw new Error(`Failed to find MATHANG by Array of MaMatHang: ${error}`);
+            }
+        },
         thamso: async () => {
             const sql = `SELECT * FROM THAMSO;`;
             try {
