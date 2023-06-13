@@ -1,7 +1,7 @@
 import pool from "../database/pool.js";
 import initModels from "../../models/init-models.js";
 import moment from 'moment'
-import { Sequelize } from "sequelize";
+import { Op, Sequelize } from "sequelize";
 
 const { DAILY, CT_BCCN, DVT, LOAIDAILY,
     QUAN, MATHANG, CT_PHIEUXUATHANG,
@@ -19,7 +19,7 @@ const resolvers = {
             const formattedTimestamp = moment(parent.NgayTiepNhan).format('YYYY-MM-DD HH:mm:ss');
             return formattedTimestamp
         },
-        relatedQuan: async (parent, args) => {
+        relatedQuan: async (parent, _) => {
             const sql = `SELECT * FROM QUAN WHERE MaQuan = '${parent.MaQuan}';`;
             try {
                 const res = await pool.query(sql);
@@ -28,7 +28,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        relatedLoaidaily: async (parent, args) => {
+        relatedLoaidaily: async (parent, _) => {
             const sql = `SELECT * FROM LOAIDAILY WHERE MaLoaiDaiLy = '${parent.MaLoaiDaiLy}';`;
             try {
                 const res = await pool.query(sql);
@@ -39,7 +39,7 @@ const resolvers = {
         }
     },
     Phieunhaphang: {
-        relatedMathang: async (parent, args) => {
+        relatedMathang: async (parent, _) => {
             const sql = `SELECT * FROM MATHANG WHERE MaMatHang = '${parent.MaMatHang}';`;
             try {
                 const res = await pool.query(sql);
@@ -50,7 +50,7 @@ const resolvers = {
         }
     },
     Mathang: {
-        relatedDvt: async (parent, args) => {
+        relatedDvt: async (parent, _) => {
             const sql = `SELECT * FROM DVT WHERE MaDVT = '${parent.MaDVT}';`;
             try {
                 const res = await pool.query(sql);
@@ -66,7 +66,7 @@ const resolvers = {
             const formattedTimestamp = moment(parent.NgayLapPhieu).format('YYYY-MM-DD HH:mm:ss');
             return formattedTimestamp
         },
-        relatedDaily: async (parent, args) => {
+        relatedDaily: async (parent, _) => {
             const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
             try {
                 const res = await pool.query(sql);
@@ -77,7 +77,7 @@ const resolvers = {
         }
     },
     Ct_phieuxuathang: {
-        relatedPhieuxuathang: async (parent, args) => {
+        relatedPhieuxuathang: async (parent, _) => {
             const sql = `SELECT * FROM PHIEUXUATHANG WHERE MaPhieuXuat = '${parent.MaPhieuXuat}';`;
             try {
                 const res = await pool.query(sql);
@@ -86,7 +86,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        relatedMathang: async (parent, args) => {
+        relatedMathang: async (parent, _) => {
             const sql = `SELECT * FROM MATHANG WHERE MaMatHang = '${parent.MaMatHang}';`;
             try {
                 const res = await pool.query(sql);
@@ -98,12 +98,12 @@ const resolvers = {
     },
     Baocaodoanhso: {
         Thang: (parent) => {
-            const formattedDate = moment(parent.Thang).format('YYYY-MM-DD');
+            const formattedDate = moment(parent.Thang).format('YYYY-MM');
             return formattedDate;
         }
     },
     Ct_bcds: {
-        relatedBaocaodoanhso: async (parent, args) => {
+        relatedBaocaodoanhso: async (parent, _) => {
             const sql = `SELECT * FROM BAOCAODOANHSO WHERE MaBaoCaoDoanhSo = '${parent.MaBaoCaoDoanhSo}';`;
             try {
                 const res = await pool.query(sql);
@@ -112,7 +112,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        relatedDaily: async (parent, args) => {
+        relatedDaily: async (parent, _) => {
             const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
             try {
                 const res = await pool.query(sql);
@@ -128,7 +128,7 @@ const resolvers = {
             const formattedTimestamp = moment(parent.NgayThuTien).format('YYYY-MM-DD HH:mm:ss');
             return formattedTimestamp
         },
-        relatedDaily: async (parent, args) => {
+        relatedDaily: async (parent, _) => {
             const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
             try {
                 const res = await pool.query(sql);
@@ -140,12 +140,12 @@ const resolvers = {
     },
     Baocaocongno: {
         Thang: (parent) => {
-            const formattedDate = moment(parent.Thang).format('YYYY-MM-DD');
+            const formattedDate = moment(parent.Thang).format('YYYY-MM');
             return formattedDate;
         }
     },
     Ct_bccn: {
-        relatedBaocaocongno: async (parent, args) => {
+        relatedBaocaocongno: async (parent, _) => {
             const sql = `SELECT * FROM BAOCAOCONGNO WHERE MaBaoCaoCongNo = '${parent.MaBaoCaoCongNo}';`;
             try {
                 const res = await pool.query(sql);
@@ -154,7 +154,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        relatedDaily: async (parent, args) => {
+        relatedDaily: async (parent, _) => {
             const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
             try {
                 const res = await pool.query(sql);
@@ -168,6 +168,18 @@ const resolvers = {
     /* ----------------------Query resolvers------------------------ */
 
     Query: {
+        everyCT_BCDSByMaBCDS: async (_, { MaBaoCaoDoanhSo }) => {
+            try {
+                const res = await CT_BCDS.findAll({
+                    where: {
+                        MaBaoCaoDoanhSo
+                    }
+                })
+                return res;
+            } catch (err) {
+                throw new Error(`Không thể tìm được chi tiết BCDS: ${err}`)
+            }
+        },
         everyMatHangByArrOfMaMatHang: async (_, { MaMatHangArr }) => {
             try {
                 const danhSach = await MATHANG.findAll({
@@ -212,6 +224,8 @@ const resolvers = {
         },
         ct_bcdsByTenDLAndThang: async (_, args) => {
             const { TenDaiLy, Thang } = args
+            const startDate = moment(Thang, "YYYY-MM").startOf('month').toDate();
+            const endDate = moment(Thang, "YYYY-MM").endOf('month').toDate();
             const result = await CT_BCDS.findAll({
                 include: [
                     {
@@ -222,7 +236,7 @@ const resolvers = {
                     {
                         model: BAOCAODOANHSO,
                         as: 'MaBaoCaoDoanhSo_BAOCAODOANHSO',
-                        where: { Thang },
+                        where: { Thang: { [Op.between]: [startDate, endDate] } },
                     },
                 ],
             });
@@ -247,10 +261,9 @@ const resolvers = {
             return result
         },
         everyDaily: async () => {
-            const sql = `SELECT * FROM DAILY;`;
             try {
-                const res = await pool.query(sql);
-                return res[0];
+                const res = await DAILY.findAll()
+                return res
             } catch (err) {
                 return console.log('Error: ', err);
             }
@@ -280,7 +293,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        quan: async (parent, args) => {
+        quan: async (_, args) => {
             const { MaQuan } = args;
 
             try {
@@ -305,7 +318,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        loaidaily: async (parent, args) => {
+        loaidaily: async (_, args) => {
             const { MaLoaiDaiLy } = args;
 
             try {
@@ -330,7 +343,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        dvt: async (parent, args) => {
+        dvt: async (_, args) => {
             const { MaDVT } = args;
 
             try {
@@ -355,7 +368,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        phieunhaphang: async (parent, args) => {
+        phieunhaphang: async (_, args) => {
             const { MaPhieuNhap } = args;
 
             try {
@@ -380,7 +393,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        mathang: async (parent, args) => {
+        mathang: async (_, args) => {
             const { MaMatHang } = args;
 
             try {
@@ -397,15 +410,14 @@ const resolvers = {
             }
         },
         everyPhieuxuathang: async () => {
-            const sql = `SELECT * FROM PHIEUXUATHANG;`;
             try {
-                const res = await pool.query(sql);
-                return res[0];
+                const res = await PHIEUXUATHANG.findAll()
+                return res
             } catch (err) {
                 return console.log('Error: ', err);
             }
         },
-        phieuxuathang: async (parent, args) => {
+        phieuxuathang: async (_, args) => {
             const { MaPhieuXuat } = args;
 
             try {
@@ -430,7 +442,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        ct_phieuxuathang: async (parent, args) => {
+        ct_phieuxuathang: async (_, args) => {
             const { MaCT_PXH } = args;
 
             try {
@@ -455,7 +467,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        baocaodoanhso: async (parent, args) => {
+        baocaodoanhso: async (_, args) => {
             const { MaBaoCaoDoanhSo } = args;
 
             try {
@@ -480,7 +492,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        ct_bcds: async (parent, args) => {
+        ct_bcds: async (_, args) => {
             const { MaCT_BCDS } = args;
 
             try {
@@ -505,7 +517,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        phieuthutien: async (parent, args) => {
+        phieuthutien: async (_, args) => {
             const { MaPhieuThuTien } = args;
 
             try {
@@ -530,7 +542,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        baocaocongno: async (parent, args) => {
+        baocaocongno: async (_, args) => {
             const { MaBaoCaoCongNo } = args;
 
             try {
@@ -555,7 +567,7 @@ const resolvers = {
                 return console.log('Error: ', err);
             }
         },
-        ct_bccn: async (parent, args) => {
+        ct_bccn: async (_, args) => {
             const { MaCT_BCCN } = args;
 
             try {
@@ -576,6 +588,38 @@ const resolvers = {
     /* ----------------------Mutation resolvers------------------------ */
 
     Mutation: {
+        calculateTyLe: async (_, { MaBaoCaoDoanhSo }) => {
+            try {
+                const ct_bcdsArr = await CT_BCDS.findAll({
+                    where: {
+                        MaBaoCaoDoanhSo
+                    }
+                })
+                if (ct_bcdsArr.length === 0) {
+                    throw new Error('Không có bất kỳ bản ghi CT_BCDS nào.')
+                }
+                const totalTongTriGia = ct_bcdsArr.reduce((sum, ct_bcds) => sum + ct_bcds.dataValues.TongTriGia, 0);
+
+                if (totalTongTriGia === 0) {
+                    throw new Error("Tất cả phiếu xuất hàng đều có tổng trị giá bằng 0. Không cần thực hiện thao tác tính toán tỷ lệ!");
+                }
+
+                for (const ct_bcds of ct_bcdsArr) {
+                    let TyLe = (ct_bcds.dataValues.TongTriGia / totalTongTriGia) * 100;
+                    try {
+                        await CT_BCDS.update(
+                            { TyLe },
+                            { where: { MaCT_BCDS: ct_bcds.dataValues.MaCT_BCDS } })
+                    } catch (err) {
+                        throw new Error(`Không thể cập nhật CT_BCDS: ${err}`);
+                    }
+                };
+                return 'Tính toán tỷ lệ của tất cả các CT_BCDS có cùng mã báo cáo doanh số thành công!';
+
+            } catch (err) {
+                throw new Error(`Không thể tính toán tỷ lệ cho các CT_BCDS: ${err}`);
+            }
+        },
         updateThamso: async (_, args) => {
             const { SoLuongLoaiDaiLy, SoDaiLyToiDaTrongQuan, SoLuongMatHang, SoLuongDVT,
                 SoTienThuKhongVuotQuaSoTienDaiLyDangNo, TyLeDonGiaXuat } = args;
@@ -611,7 +655,7 @@ const resolvers = {
             const res = await pool.query('SELECT * FROM THAMSO')
             return res[0][0]
         },
-        addDaily: async (parent, args) => {
+        addDaily: async (_, args) => {
             const { NgayTiepNhan } = args;
             let newDaiLy
 
@@ -634,7 +678,7 @@ const resolvers = {
             }
 
         },
-        updateDaily: async (parent, args) => {
+        updateDaily: async (_, args) => {
             const { MaDaiLy, ...rest } = args;
 
             try {
@@ -649,7 +693,7 @@ const resolvers = {
                 throw new Error('Failed to update DAILY');
             }
         },
-        deleteDaily: async (parent, args) => {
+        deleteDaily: async (_, args) => {
             const { MaDaiLy } = args;
             try {
                 const daily = await DAILY.findByPk(MaDaiLy);
@@ -663,17 +707,16 @@ const resolvers = {
                 throw new Error(`Failed to delete DAILY: ${error}`);
             }
         },
-        addBaocaocongno: async (parent, args) => {
-            const parsedDate = moment(args.Thang, 'YYYY-MM-DD').toDate();
+        addBaocaocongno: async (_, { Thang }) => {
             try {
-                const newLoaidaily = await BAOCAOCONGNO.create({ Thang: parsedDate });
+                const newLoaidaily = await BAOCAOCONGNO.create({ Thang });
                 return newLoaidaily;
             } catch (error) {
                 console.log('Error: ', error);
                 throw new Error(`Failed to add BAOCAOCONGNO: ${error}`);
             }
         },
-        updateBaocaocongno: async (parent, args) => {
+        updateBaocaocongno: async (_, args) => {
             const { MaBaoCaoCongNo, ...rest } = args;
 
             try {
@@ -688,7 +731,7 @@ const resolvers = {
                 throw new Error('Failed to update BAOCAOCONGNO');
             }
         },
-        deleteBaocaocongno: async (parent, args) => {
+        deleteBaocaocongno: async (_, args) => {
             const { MaBaoCaoCongNo } = args;
             try {
                 const baocaocongno = await BAOCAOCONGNO.findByPk(MaBaoCaoCongNo);
@@ -702,7 +745,7 @@ const resolvers = {
                 throw new Error(`Failed to delete BAOCAOCONGNO: ${error}`);
             }
         },
-        addCt_bccn: async (parent, args) => {
+        addCt_bccn: async (_, args) => {
             try {
                 const newLoaidaily = await CT_BCCN.create(args);
                 return newLoaidaily;
@@ -711,7 +754,7 @@ const resolvers = {
                 throw new Error('Failed to add CT_BCCN')
             }
         },
-        updateCt_bccn: async (parent, args) => {
+        updateCt_bccn: async (_, args) => {
             const { MaCT_BCCN, ...rest } = args;
 
             try {
@@ -726,7 +769,7 @@ const resolvers = {
                 throw new Error('Failed to update CT_BCCN');
             }
         },
-        deleteCt_bccn: async (parent, args) => {
+        deleteCt_bccn: async (_, args) => {
             const { MaCT_BCCN } = args;
             try {
                 const ct_bccn = await CT_BCCN.findByPk(MaCT_BCCN);
@@ -740,16 +783,16 @@ const resolvers = {
                 throw new Error(`Failed to delete CT_BCCN: ${error}`);
             }
         },
-        addQuan: async (parent, args) => {
+        addQuan: async (_, args) => {
             try {
-                const newLoaidaily = await QUAN.create(args);
-                return newLoaidaily;
+                const newQuan = await QUAN.create(args);
+                return newQuan;
             } catch (error) {
                 console.log('Error: ', error);
                 throw new Error('Failed to add QUAN')
             }
         },
-        updateQuan: async (parent, args) => {
+        updateQuan: async (_, args) => {
             const { MaQuan, ...rest } = args;
 
             try {
@@ -764,7 +807,7 @@ const resolvers = {
                 throw new Error('Failed to update QUAN');
             }
         },
-        deleteQuan: async (parent, args) => {
+        deleteQuan: async (_, args) => {
             const { MaQuan } = args;
             try {
                 const quan = await QUAN.findByPk(MaQuan);
@@ -778,7 +821,7 @@ const resolvers = {
                 throw new Error(`Failed to delete QUAN: ${error}`);
             }
         },
-        addLoaidaily: async (parent, args) => {
+        addLoaidaily: async (_, args) => {
             try {
                 const newLoaidaily = await LOAIDAILY.create(args);
                 return newLoaidaily;
@@ -787,7 +830,7 @@ const resolvers = {
                 throw new Error('Failed to add LOAIDAILY');
             }
         },
-        updateLoaidaily: async (parent, args) => {
+        updateLoaidaily: async (_, args) => {
             const { MaLoaiDaiLy, ...rest } = args;
 
             try {
@@ -802,7 +845,7 @@ const resolvers = {
                 throw new Error('Failed to update LOAIDAILY');
             }
         },
-        deleteLoaidaily: async (parent, args) => {
+        deleteLoaidaily: async (_, args) => {
             const { MaLoaiDaiLy } = args;
             try {
                 const loaidaily = await LOAIDAILY.findByPk(MaLoaiDaiLy);
@@ -816,16 +859,16 @@ const resolvers = {
                 throw new Error(`Failed to delete LOAIDAILY: ${error}`);
             }
         },
-        addDvt: async (parent, args) => {
+        addDvt: async (_, args) => {
             try {
-                const newLoaidaily = await DVT.create(args);
-                return newLoaidaily;
+                const newDVT = await DVT.create(args);
+                return newDVT;
             } catch (error) {
                 console.log('Error: ', error);
                 throw new Error('Failed to add DVT')
             }
         },
-        updateDvt: async (parent, args) => {
+        updateDvt: async (_, args) => {
             const { MaDVT, ...rest } = args;
 
             try {
@@ -840,7 +883,7 @@ const resolvers = {
                 throw new Error('Failed to update DVT');
             }
         },
-        deleteDvt: async (parent, args) => {
+        deleteDvt: async (_, args) => {
             const { MaDVT } = args;
             try {
                 const dvt = await DVT.findByPk(MaDVT);
@@ -854,16 +897,16 @@ const resolvers = {
                 throw new Error(`Failed to delete DVT: ${error}`);
             }
         },
-        addPhieunhaphang: async (parent, args) => {
+        addPhieunhaphang: async (_, args) => {
             try {
-                const newLoaidaily = await PHIEUNHAPHANG.create(args);
-                return newLoaidaily;
+                const newPhieunhaphang = await PHIEUNHAPHANG.create(args);
+                return newPhieunhaphang;
             } catch (error) {
                 console.log('Error: ', error);
                 throw new Error('Failed to add PHIEUNHAPHANG')
             }
         },
-        updatePhieunhaphang: async (parent, args) => {
+        updatePhieunhaphang: async (_, args) => {
             const { MaPhieuNhap, ...rest } = args;
 
             try {
@@ -878,7 +921,7 @@ const resolvers = {
                 throw new Error('Failed to update PHIEUNHAPHANG');
             }
         },
-        deletePhieunhaphang: async (parent, args) => {
+        deletePhieunhaphang: async (_, args) => {
             const { MaPhieuNhap } = args;
             try {
                 const phieunhaphang = await PHIEUNHAPHANG.findByPk(MaPhieuNhap);
@@ -892,16 +935,16 @@ const resolvers = {
                 throw new Error(`Failed to delete PHIEUNHAPHANG: ${error}`);
             }
         },
-        addMathang: async (parent, args) => {
+        addMathang: async (_, args) => {
             try {
-                const newLoaidaily = await MATHANG.create(args);
-                return newLoaidaily;
+                const newMathang = await MATHANG.create(args);
+                return newMathang;
             } catch (error) {
                 console.log('Error: ', error);
                 throw new Error('Failed to add MATHANG')
             }
         },
-        updateMathang: async (parent, args) => {
+        updateMathang: async (_, args) => {
             const { MaMatHang, ...rest } = args;
 
             try {
@@ -916,7 +959,7 @@ const resolvers = {
                 throw new Error('Failed to update MATHANG');
             }
         },
-        deleteMathang: async (parent, args) => {
+        deleteMathang: async (_, args) => {
             const { MaMatHang } = args;
             try {
                 const mathang = await MATHANG.findByPk(MaMatHang);
@@ -930,7 +973,7 @@ const resolvers = {
                 throw new Error(`Failed to delete MATHANG: ${error}`);
             }
         },
-        addPhieuxuathang: async (parent, args) => {
+        addPhieuxuathang: async (_, args) => {
             const { NgayLapPhieu } = args;
             let newPhieuXuatHang
 
@@ -952,7 +995,7 @@ const resolvers = {
                 throw new Error(`Failed to add PHIEUXUATHANG: ${error}`)
             }
         },
-        updatePhieuxuathang: async (parent, args) => {
+        updatePhieuxuathang: async (_, args) => {
             const { MaPhieuXuat, ...rest } = args;
 
             try {
@@ -967,7 +1010,7 @@ const resolvers = {
                 throw new Error('Failed to update PHIEUXUATHANG');
             }
         },
-        deletePhieuxuathang: async (parent, args) => {
+        deletePhieuxuathang: async (_, args) => {
             const { MaPhieuXuat } = args;
             try {
                 const phieuxuathang = await PHIEUXUATHANG.findByPk(MaPhieuXuat);
@@ -981,16 +1024,16 @@ const resolvers = {
                 throw new Error(`Failed to delete PHIEUXUATHANG: ${error}`);
             }
         },
-        addCt_phieuxuathang: async (parent, args) => {
+        addCt_phieuxuathang: async (_, args) => {
             try {
-                const newLoaidaily = await CT_PHIEUXUATHANG.create(args);
-                return newLoaidaily;
+                const newCt_phieuxuathang = await CT_PHIEUXUATHANG.create(args);
+                return newCt_phieuxuathang;
             } catch (error) {
                 console.log('Error: ', error);
                 throw new Error('Failed to add CT_PHIEUXUATHANG')
             }
         },
-        updateCt_phieuxuathang: async (parent, args) => {
+        updateCt_phieuxuathang: async (_, args) => {
             const { MaCT_PXH, ...rest } = args;
 
             try {
@@ -1005,7 +1048,7 @@ const resolvers = {
                 throw new Error('Failed to update CT_PHIEUXUATHANG');
             }
         },
-        deleteCt_phieuxuathang: async (parent, args) => {
+        deleteCt_phieuxuathang: async (_, args) => {
             const { MaCT_PXH } = args;
             try {
                 const ct_phieuxuathang = await CT_PHIEUXUATHANG.findByPk(MaCT_PXH);
@@ -1022,14 +1065,14 @@ const resolvers = {
         addBaocaodoanhso: async (parent, args) => {
             const parsedDate = moment(args.Thang, 'YYYY-MM-DD').toDate();
             try {
-                const newLoaidaily = await BAOCAODOANHSO.create({ Thang: parsedDate });
-                return newLoaidaily;
+                const newBaocaodoanhso = await BAOCAODOANHSO.create({ Thang: parsedDate });
+                return newBaocaodoanhso;
             } catch (error) {
                 console.log('Error: ', error);
                 throw new Error(`Failed to add BAOCAODOANHSO: ${error}`);
             }
         },
-        updateBaocaodoanhso: async (parent, args) => {
+        updateBaocaodoanhso: async (_, args) => {
             const { MaBaoCaoDoanhSo, ...rest } = args;
 
             try {
@@ -1044,7 +1087,7 @@ const resolvers = {
                 throw new Error('Failed to update BAOCAODOANHSO');
             }
         },
-        deleteBaocaodoanhso: async (parent, args) => {
+        deleteBaocaodoanhso: async (_, args) => {
             const { MaBaoCaoDoanhSo } = args;
             try {
                 const baocaodoanhso = await BAOCAODOANHSO.findByPk(MaBaoCaoDoanhSo);
@@ -1058,16 +1101,54 @@ const resolvers = {
                 throw new Error(`Failed to delete BAOCAODOANHSO: ${error}`);
             }
         },
-        addCt_bcds: async (parent, args) => {
+        addCt_bcds: async (_, args) => {
+            const { MaBaoCaoDoanhSo, MaDaiLy } = args;
+
             try {
-                const newCT_BCDS = await CT_BCDS.create(args);
-                return newCT_BCDS;
+                // Lay ra bao cao doanh so co Id la MaBaoCaoDoanhSo de lay duoc Thang
+                const baocaodoanhso = await BAOCAODOANHSO.findOne({ where: { MaBaoCaoDoanhSo } });
+
+                if (!baocaodoanhso) {
+                    throw new Error(`Không thể tìm thấy được báo cáo doanh số với mã báo cáo doanh số bạn cung cấp.`);
+                }
+
+                const startDate = moment(baocaodoanhso.Thang).startOf('month').toDate();
+                const endDate = moment(baocaodoanhso.Thang).endOf('month').toDate();
+
+                // Xu ly logic tinh toan TyLe, SoPhieuXuat, TongTriGia:
+                // Lay ra tat ca PhieuXuatHang co Thang nam trong baocaodoanhso.Thang, MaDaiLy = MaDaiLy
+                const res = await PHIEUXUATHANG.findAll({
+                    where: {
+                        MaDaiLy,
+                        NgayLapPhieu: { [Op.between]: [startDate, endDate] },
+                    },
+                });
+
+                let tyle = 0;
+                let sophieuxuat = 0;
+                let tongtien = 0;
+
+                if (res.length > 0) {
+                    for (const pxh of res) {
+                        tongtien += pxh.dataValues.TongTien;
+                        sophieuxuat++;
+                    }
+                }
+
+                const ct_bcds = await CT_BCDS.create({
+                    TyLe: tyle,
+                    SoPhieuXuat: sophieuxuat,
+                    TongTriGia: tongtien,
+                    ...args,
+                });
+
+                return ct_bcds;
             } catch (error) {
-                console.log('Error: ', error);
-                throw new Error(`Failed to add CT_BCDS: ${error}`)
+                console.log('Error:', error);
+                throw new Error(`Không thể thêm chi tiết báo cáo doanh số mới vào cơ sở dữ liệu: ${error.message}`);
             }
         },
-        updateCt_bcds: async (parent, args) => {
+        updateCt_bcds: async (_, args) => {
             const { MaCT_BCDS, ...rest } = args;
 
             try {
@@ -1082,7 +1163,7 @@ const resolvers = {
                 throw new Error('Failed to update CT_BCDS');
             }
         },
-        deleteCt_bcds: async (parent, args) => {
+        deleteCt_bcds: async (_, args) => {
             const { MaCT_BCDS } = args;
             try {
                 const ct_bcds = await CT_BCDS.findByPk(MaCT_BCDS);
@@ -1096,7 +1177,7 @@ const resolvers = {
                 throw new Error(`Failed to delete CT_BCDS: ${error}`);
             }
         },
-        addPhieuthutien: async (parent, args) => {
+        addPhieuthutien: async (_, args) => {
             const { NgayThuTien } = args;
             let newPhieuThuTien
 
@@ -1118,7 +1199,7 @@ const resolvers = {
                 throw new Error(`Failed to add PHIEUTHUTIEN: ${error}`)
             }
         },
-        updatePhieuthutien: async (parent, args) => {
+        updatePhieuthutien: async (_, args) => {
             const { MaPhieuThuTien, ...rest } = args;
 
             try {
@@ -1133,7 +1214,7 @@ const resolvers = {
                 throw new Error('Failed to update PHIEUTHUTIEN');
             }
         },
-        deletePhieuthutien: async (parent, args) => {
+        deletePhieuthutien: async (_, args) => {
             const { MaPhieuThuTien } = args;
             try {
                 const phieuthutien = await PHIEUTHUTIEN.findByPk(MaPhieuThuTien);

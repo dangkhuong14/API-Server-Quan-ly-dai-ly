@@ -2,7 +2,7 @@ import gql from "graphql-tag"
 
 const typeDefs = gql`
   type Daily {
-    MaDaiLy: ID
+    MaDaiLy: ID!
     TenDaiLy: String!
     DienThoai: String!
     DiaChi: String!
@@ -16,30 +16,30 @@ const typeDefs = gql`
   }
 
   type Quan {
-    MaQuan: ID
+    MaQuan: ID!
     TenQuan: String!
   }
 
   type Loaidaily {
-    MaLoaiDaiLy: ID
+    MaLoaiDaiLy: ID!
     TenLoaiDaiLy: String!
     SoNoToiDa: Int!
   }
 
   type Dvt {
-    MaDVT: ID
+    MaDVT: ID!
     TenDVT: String!
   }
 
   type Phieunhaphang {
-    MaPhieuNhap: ID
+    MaPhieuNhap: ID!
     SoLuong: Int!
     MaMatHang: ID!
     relatedMathang: Mathang
   }
 
   type Mathang {
-    MaMatHang: ID
+    MaMatHang: ID!
     TenMatHang: String!
     SoLuongTon: Int!
     DonGiaNhap: Int!
@@ -48,7 +48,7 @@ const typeDefs = gql`
   }
 
   type Phieuxuathang {
-    MaPhieuXuat: ID
+    MaPhieuXuat: ID!
     NgayLapPhieu: String!
     TongTien: Float!
     MaDaiLy: ID!
@@ -56,7 +56,7 @@ const typeDefs = gql`
   }
 
   type Ct_phieuxuathang {
-    MaCT_PXH: ID
+    MaCT_PXH: ID!
     MaPhieuXuat: ID!
     relatedPhieuxuathang: Phieuxuathang
     MaMatHang: ID!
@@ -64,23 +64,23 @@ const typeDefs = gql`
   }
 
   type Baocaodoanhso {
-    MaBaoCaoDoanhSo: ID
+    MaBaoCaoDoanhSo: ID!
     Thang: String!
   }
 
   type Ct_bcds {
-    MaCT_BCDS: ID
+    MaCT_BCDS: ID!
     MaBaoCaoDoanhSo: ID!
     relatedBaocaodoanhso: Baocaodoanhso
     MaDaiLy: ID!
     relatedDaily: Daily
     SoPhieuXuat: Int!
-    TongTriGia: Int!
+    TongTriGia: Float!
     TyLe: Float!
   }
 
   type Phieuthutien {
-    MaPhieuThuTien: ID
+    MaPhieuThuTien: ID!
     MaDaiLy: ID!
     relatedDaily: Daily
     NgayThuTien: String!
@@ -88,12 +88,12 @@ const typeDefs = gql`
   }
 
   type Baocaocongno {
-    MaBaoCaoCongNo: ID
+    MaBaoCaoCongNo: ID!
     Thang: String!
   }
 
   type Ct_bccn {
-    MaCT_BCCN: ID
+    MaCT_BCCN: ID!
     MaBaoCaoCongNo: ID!
     relatedBaocaocongno: Baocaocongno
     MaDaiLy: ID!
@@ -104,7 +104,7 @@ const typeDefs = gql`
   }
 
   type Thamso {
-    MaThamSo: ID
+    MaThamSo: ID!
     SoLuongLoaiDaiLy: Int!
     SoDaiLyToiDaTrongQuan: Int!
     SoLuongMatHang: Int!
@@ -114,6 +114,8 @@ const typeDefs = gql`
   }
 
   type Query {
+    everyCT_BCDSByMaBCDS(MaBaoCaoDoanhSo: ID!): [Ct_bcds]
+
     everyMatHangByArrOfMaMatHang(MaMatHangArr: [ID!]! ): [Mathang]
 
     thamso: Thamso
@@ -164,6 +166,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
+    calculateTyLe(MaBaoCaoDoanhSo: ID!): String!
+
     updateThamso(SoLuongLoaiDaiLy: Int, SoDaiLyToiDaTrongQuan: Int, SoLuongMatHang: Int, SoLuongDVT: Int, SoTienThuKhongVuotQuaSoTienDaiLyDangNo: Int, TyLeDonGiaXuat: Float): Thamso
 
     addDaily(TenDaiLy: String!, DienThoai: String!, DiaChi: String!, NgayTiepNhan: String, TienNo: Float, Email: String, MaQuan: ID!, MaLoaiDaiLy: ID!): Daily
@@ -186,8 +190,8 @@ const typeDefs = gql`
     updatePhieunhaphang(MaPhieuNhap: ID!, SoLuong: Int!, MaMatHang: ID!): Phieunhaphang
     deletePhieunhaphang(MaPhieuNhap: ID!): Phieunhaphang
 
-    addMathang(TenMatHang: String!, SoLuongTon: Int!, DonGiaNhap: Int!, MaDVT: ID!): Mathang
-    updateMathang(MaMatHang: ID!, TenMatHang: String!, SoLuongTon: Int!, DonGiaNhap: Int!, MaDVT: ID!): Mathang
+    addMathang(TenMatHang: String!, SoLuongTon: Int!, DonGiaNhap: Float!, MaDVT: ID!): Mathang
+    updateMathang(MaMatHang: ID!, TenMatHang: String!, SoLuongTon: Int!, DonGiaNhap: Float!, MaDVT: ID!): Mathang
     deleteMathang(MaMatHang: ID!): Mathang
 
     addPhieuxuathang(NgayLapPhieu: String, TongTien: Float!, MaDaiLy: ID!): Phieuxuathang
@@ -202,8 +206,8 @@ const typeDefs = gql`
     updateBaocaodoanhso(MaBaoCaoDoanhSo: ID, Thang: String!): Baocaodoanhso
     deleteBaocaodoanhso(MaBaoCaoDoanhSo: ID): Baocaodoanhso
 
-    addCt_bcds(MaBaoCaoDoanhSo: ID!, MaDaiLy: ID!, SoPhieuXuat: Int!, TongTriGia: Int!, TyLe: Float!): Ct_bcds
-    updateCt_bcds(MaCT_BCDS: ID, MaBaoCaoDoanhSo: ID!, MaDaiLy: ID!, SoPhieuXuat: Int!, TongTriGia: Int!, TyLe: Float!): Ct_bcds
+    addCt_bcds(MaBaoCaoDoanhSo: ID!, MaDaiLy: ID!): Ct_bcds
+    updateCt_bcds(MaCT_BCDS: ID, MaBaoCaoDoanhSo: ID!, MaDaiLy: ID!, SoPhieuXuat: Int!, TongTriGia: Float!, TyLe: Float!): Ct_bcds
     deleteCt_bcds(MaCT_BCDS: ID): Ct_bcds
 
     addPhieuthutien(MaDaiLy: ID!, NgayThuTien: String, SoTienThu: Float!): Phieuthutien

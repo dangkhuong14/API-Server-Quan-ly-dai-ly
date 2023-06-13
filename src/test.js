@@ -1,4 +1,7 @@
-// import pool from "./database/pool.js";
+import pool from "./database/pool.js";
+import moment from 'moment';
+import initModels from "../models/init-models.js";
+const { DAILY, PHIEUNHAPHANG, CT_BCDS, BAOCAODOANHSO, PHIEUXUATHANG } = initModels;
 
 // let doQ = async () => {
 //     const sql = `SELECT * FROM QUAN WHERE TenQuan = 'Quan Binh Tan';`;
@@ -31,34 +34,56 @@
 // console.log(typeof (parsedTimestamp));
 // console.log(parsedTimestamp);
 
-const objects = [
-    { MaPhieuXuat: 1, NgayLapPhieu: '2023-01-01', TongTien: 100, MaDaiLy: 1 },
-    { MaPhieuXuat: 2, NgayLapPhieu: '2023-01-02', TongTien: 200, MaDaiLy: 2 },
-    { MaPhieuXuat: 3, NgayLapPhieu: '2023-01-03', TongTien: 150, MaDaiLy: 1 },
-    { MaPhieuXuat: 4, NgayLapPhieu: '2023-01-04', TongTien: 300, MaDaiLy: 3 },
-    { MaPhieuXuat: 5, NgayLapPhieu: '2023-01-05', TongTien: 250, MaDaiLy: 2 }
-];
+// ----------------------------------------------------------------------
 
-const sumsByMaDaiLy = {};
-const countsByMaDaiLy = {};
+// const objects = [
+//     { MaPhieuXuat: 1, NgayLapPhieu: '2023-01-01', TongTien: 100, MaDaiLy: 1 },
+//     { MaPhieuXuat: 2, NgayLapPhieu: '2023-01-02', TongTien: 200, MaDaiLy: 2 },
+//     { MaPhieuXuat: 3, NgayLapPhieu: '2023-01-03', TongTien: 150, MaDaiLy: 1 },
+//     { MaPhieuXuat: 4, NgayLapPhieu: '2023-01-04', TongTien: 300, MaDaiLy: 3 },
+//     { MaPhieuXuat: 5, NgayLapPhieu: '2023-01-05', TongTien: 250, MaDaiLy: 2 }
+// ];
 
-for (const obj of objects) {
-    const { MaDaiLy, TongTien } = obj;
+// const sumsByMaDaiLy = {};
+// const countsByMaDaiLy = {};
 
-    // Tính tổng tiền cho MaDaiLy
-    if (sumsByMaDaiLy[MaDaiLy]) {
-        sumsByMaDaiLy[MaDaiLy] += TongTien;
-    } else {
-        sumsByMaDaiLy[MaDaiLy] = TongTien;
-    }
+// for (const obj of objects) {
+//     const { MaDaiLy, TongTien } = obj;
 
-    // Tăng số lượng đối tượng cho MaDaiLy
-    if (countsByMaDaiLy[MaDaiLy]) {
-        countsByMaDaiLy[MaDaiLy] += 1;
-    } else {
-        countsByMaDaiLy[MaDaiLy] = 1;
-    }
-}
+//     // Tính tổng tiền cho MaDaiLy
+//     if (sumsByMaDaiLy[MaDaiLy]) {
+//         sumsByMaDaiLy[MaDaiLy] += TongTien;
+//     } else {
+//         sumsByMaDaiLy[MaDaiLy] = TongTien;
+//     }
 
-console.log(sumsByMaDaiLy);   // Tổng tiền theo MaDaiLy { '1': 250, '2': 450, '3': 300 }
-console.log(countsByMaDaiLy); // Số lượng đối tượng theo MaDaiLy { '1': 2, '2': 2, '3': 1 }
+//     // Tăng số lượng đối tượng cho MaDaiLy
+//     if (countsByMaDaiLy[MaDaiLy]) {
+//         countsByMaDaiLy[MaDaiLy] += 1;
+//     } else {
+//         countsByMaDaiLy[MaDaiLy] = 1;
+//     }
+// }
+
+// console.log(sumsByMaDaiLy);   // Tổng tiền theo MaDaiLy { '1': 250, '2': 450, '3': 300 }
+// console.log(countsByMaDaiLy); // Số lượng đối tượng theo MaDaiLy { '1': 2, '2': 2, '3': 1 }
+
+//-------------------------------
+// let ngay;
+// PHIEUXUATHANG.findAll().then(result => {
+//     ngay = result[0].dataValues.NgayLapPhieu
+//     const formattedTimestamp = moment(ngay).format('YYYY-MM-DD HH:mm:ss');
+//     console.log(ngay)
+//     console.log(typeof (ngay));
+//     console.log(formattedTimestamp);
+//     console.log(typeof (formattedTimestamp));
+// })
+
+// const sql = `SELECT * FROM BAOCAODOANHSO;`;
+// pool.query(sql).then(result => { console.log(result) })
+
+const Thang = '2023-02-02'
+const startDate = moment(Thang, "YYYY-MM").startOf('month').toDate();
+const endDate = moment(Thang, "YYYY-MM").endOf('month').toDate();
+console.log(startDate);
+console.log(endDate);
