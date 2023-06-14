@@ -42,7 +42,7 @@ const typeDefs = gql`
     MaMatHang: ID!
     TenMatHang: String!
     SoLuongTon: Int!
-    DonGiaNhap: Int!
+    DonGiaNhap: Float!
     MaDVT: ID!
     relatedDvt: Dvt
   }
@@ -60,6 +60,9 @@ const typeDefs = gql`
     MaPhieuXuat: ID!
     relatedPhieuxuathang: Phieuxuathang
     MaMatHang: ID!
+    SoLuongXuat: Int!
+    DonGiaXuat: Float!
+    ThanhTien: Float!
     relatedMathang: Mathang
   }
 
@@ -198,7 +201,7 @@ const typeDefs = gql`
     updatePhieuxuathang(MaPhieuXuat: ID!, NgayLapPhieu: String!, TongTien: Float!, MaDaiLy: ID!): Phieuxuathang
     deletePhieuxuathang(MaPhieuXuat: ID!): Phieuxuathang
 
-    addCt_phieuxuathang(MaPhieuXuat: ID!, MaMatHang: ID!): Ct_phieuxuathang
+    addCt_phieuxuathang(MaPhieuXuat: ID!, MaMatHang: ID!, SoLuongXuat: Int!, DonGiaXuat: Float!, ThanhTien: Float!): Ct_phieuxuathang
     updateCt_phieuxuathang(MaCT_PXH: ID!, MaPhieuXuat: ID!, MaMatHang: ID!): Ct_phieuxuathang
     deleteCt_phieuxuathang(MaCT_PXH: ID!): Ct_phieuxuathang
 

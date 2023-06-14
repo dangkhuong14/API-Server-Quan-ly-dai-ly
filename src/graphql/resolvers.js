@@ -1030,7 +1030,7 @@ const resolvers = {
                 return newCt_phieuxuathang;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to add CT_PHIEUXUATHANG')
+                throw new Error(`Không thể thêm chi tiết phiếu xuất hàng mới: ${error}`)
             }
         },
         updateCt_phieuxuathang: async (_, args) => {
