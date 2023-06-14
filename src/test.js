@@ -82,8 +82,10 @@ const { DAILY, PHIEUNHAPHANG, CT_BCDS, BAOCAODOANHSO, PHIEUXUATHANG } = initMode
 // const sql = `SELECT * FROM BAOCAODOANHSO;`;
 // pool.query(sql).then(result => { console.log(result) })
 
-const Thang = '2023-02-02'
-const startDate = moment(Thang, "YYYY-MM").startOf('month').toDate();
-const endDate = moment(Thang, "YYYY-MM").endOf('month').toDate();
-console.log(startDate);
-console.log(endDate);
+// const Thang = '2023-02-02'
+// const startDate = moment(Thang, "YYYY-MM").startOf('month').toDate();
+// const endDate = moment(Thang, "YYYY-MM").endOf('month').toDate();
+// console.log(startDate);
+// console.log(endDate);
+
+DAILY.findByPk('1').then(result => { console.log(result) })

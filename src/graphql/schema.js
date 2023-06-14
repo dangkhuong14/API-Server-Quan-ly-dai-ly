@@ -169,6 +169,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
+    accumulateTienNo(MaDaiLy: ID!, TienNo: Float!): Daily
+
     calculateTyLe(MaBaoCaoDoanhSo: ID!): String!
 
     updateThamso(SoLuongLoaiDaiLy: Int, SoDaiLyToiDaTrongQuan: Int, SoLuongMatHang: Int, SoLuongDVT: Int, SoTienThuKhongVuotQuaSoTienDaiLyDangNo: Int, TyLeDonGiaXuat: Float): Thamso

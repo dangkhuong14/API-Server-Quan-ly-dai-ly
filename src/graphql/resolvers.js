@@ -588,6 +588,21 @@ const resolvers = {
     /* ----------------------Mutation resolvers------------------------ */
 
     Mutation: {
+        accumulateTienNo: async (_, { MaDaiLy, TienNo }) => {
+            try {
+                const daily = await DAILY.findByPk(MaDaiLy)
+                if (!daily) throw new Error('Không tìm thấy đại lý')
+                const tienNoMoi = daily.TienNo + TienNo;
+                await DAILY.update(
+                    { TienNo: tienNoMoi },
+                    { where: { MaDaiLy } }
+                )
+                const dailyafterupdate = DAILY.findByPk(MaDaiLy)
+                return dailyafterupdate
+            } catch (err) {
+                throw new Error(`Không thể cập nhật tiền nợ cho đại lý, ${err}`)
+            }
+        },
         calculateTyLe: async (_, { MaBaoCaoDoanhSo }) => {
             try {
                 const ct_bcdsArr = await CT_BCDS.findAll({
