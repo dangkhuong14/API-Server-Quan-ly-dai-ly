@@ -671,13 +671,19 @@ const resolvers = {
             return res[0][0]
         },
         addDaily: async (_, args) => {
-            const { NgayTiepNhan } = args;
+            const { NgayTiepNhan, MaQuan } = args;
             let newDaiLy
 
             // Chuyển đổi giá trị timestamp từ dạng string sang dạng timestamp
             const convertedTimestamp = moment(NgayTiepNhan).toDate();
 
             try {
+                const sql = `SELECT * FROM THAMSO;`;
+                const res = await pool.query(sql);
+                // Kiem tra tham so
+                const soDLToiDaTrongQuan = res[0][0].SoDaiLyToiDaTrongQuan;
+                const daiLyArr = await DAILY.findAll({ where: { MaQuan } })
+                if (daiLyArr.length >= soDLToiDaTrongQuan) throw new Error(`Số lượng đại lý có trong một quận đã đạt mức tối đa là ${soDLToiDaTrongQuan} đại lý mỗi quận!`)
                 // Kiểm tra nếu phía client cung cấp giá trị cho NgayTiepNhan
                 if (NgayTiepNhan) {
                     newDaiLy = await DAILY.create({ NgayTiepNhan: convertedTimestamp, ...args });
@@ -689,7 +695,7 @@ const resolvers = {
 
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error(`Failed to add DAILY: ${error}`)
+                throw new Error(`Không thể thêm đại lý mới vì: ${error}`)
             }
 
         },
