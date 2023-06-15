@@ -106,6 +106,14 @@ const typeDefs = gql`
     NoCuoi: Int!
   }
 
+  type Phieughino {
+    MaPhieuGhiNo: ID!
+    MaDaiLy: ID!
+    NgayLapPhieu: String!
+    SoTienNo: Float!
+    relatedDaily: Daily
+  }
+
   type Thamso {
     MaThamSo: ID!
     SoLuongLoaiDaiLy: Int!
@@ -169,6 +177,8 @@ const typeDefs = gql`
   }
 
   type Mutation {
+    addPhieughino(MaDaiLy: ID!, NgayLapPhieu: String, SoTienNo: Float!): Phieughino
+
     accumulateTienNo(MaDaiLy: ID!, TienNo: Float!): Daily
 
     calculateTyLe(MaBaoCaoDoanhSo: ID!): String!

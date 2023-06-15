@@ -6,7 +6,7 @@ import { Op, Sequelize } from "sequelize";
 const { DAILY, CT_BCCN, DVT, LOAIDAILY,
     QUAN, MATHANG, CT_PHIEUXUATHANG,
     PHIEUXUATHANG, BAOCAOCONGNO, BAOCAODOANHSO,
-    CT_BCDS, PHIEUNHAPHANG, PHIEUTHUTIEN
+    CT_BCDS, PHIEUNHAPHANG, PHIEUTHUTIEN, PHIEUGHINO
 } = initModels
 
 const resolvers = {
@@ -153,6 +153,22 @@ const resolvers = {
             } catch (err) {
                 return console.log('Error: ', err);
             }
+        },
+        relatedDaily: async (parent, _) => {
+            const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
+            try {
+                const res = await pool.query(sql);
+                return res[0][0];
+            } catch (err) {
+                return console.log('Error: ', err);
+            }
+        }
+    },
+    Phieughino: {
+        NgayLapPhieu: (parent) => {
+            // Convert timestamp into string
+            const formattedTimestamp = moment(parent.NgayLapPhieu).format('YYYY-MM-DD HH:mm:ss');
+            return formattedTimestamp
         },
         relatedDaily: async (parent, _) => {
             const sql = `SELECT * FROM DAILY WHERE MaDaiLy = '${parent.MaDaiLy}';`;
@@ -588,6 +604,28 @@ const resolvers = {
     /* ----------------------Mutation resolvers------------------------ */
 
     Mutation: {
+        addPhieughino: async (_, args) => {
+            const { NgayLapPhieu } = args;
+            let newPhieuGhiNo
+
+            // Chuyển đổi giá trị timestamp từ dạng string sang dạng timestamp
+            const convertedTimestamp = moment(NgayLapPhieu).toDate();
+
+            try {
+                // Kiểm tra nếu phía client cung cấp giá trị cho NgayLapPhieu
+                if (NgayLapPhieu) {
+                    newPhieuGhiNo = await PHIEUGHINO.create({ NgayLapPhieu: convertedTimestamp, ...args });
+                    return newPhieuGhiNo;
+                } else {
+                    newPhieuGhiNo = await PHIEUGHINO.create(args);
+                    return newPhieuGhiNo;
+                }
+
+            } catch (error) {
+                console.log('Error: ', error);
+                throw new Error(`Không thể thêm phiếu ghi nợ mới.`)
+            }
+        },
         accumulateTienNo: async (_, { MaDaiLy, TienNo }) => {
             try {
                 const daily = await DAILY.findByPk(MaDaiLy)
