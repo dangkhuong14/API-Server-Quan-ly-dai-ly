@@ -913,12 +913,23 @@ const resolvers = {
             }
         },
         addPhieunhaphang: async (_, args) => {
+            const { MaMatHang, SoLuong } = args
             try {
                 const newPhieunhaphang = await PHIEUNHAPHANG.create(args);
+
+                // Thay doi so luong voi mat hang tuong ung
+                const mathang = await MATHANG.findByPk(MaMatHang)
+                if (!mathang) throw new Error(`Không thể tìm thấy mặt hàng!`)
+                const newSoLuong = mathang.dataValues.SoLuongTon + SoLuong;
+
+                await MATHANG.update(
+                    { SoLuongTon: newSoLuong },
+                    { where: { MaMatHang } }
+                )
                 return newPhieunhaphang;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to add PHIEUNHAPHANG')
+                throw new Error('Không thể thêm phiếu nhập hàng mới!')
             }
         },
         updatePhieunhaphang: async (_, args) => {
