@@ -19,7 +19,7 @@ export default function (sequelize, DataTypes) {
     NgayThuTien: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: Sequelize.Sequelize.literal('CURRENT_TIMESTAMP')
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
     },
     SoTienThu: {
       type: DataTypes.DOUBLE,
