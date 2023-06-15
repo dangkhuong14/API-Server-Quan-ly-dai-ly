@@ -184,6 +184,18 @@ const resolvers = {
     /* ----------------------Query resolvers------------------------ */
 
     Query: {
+        everyCT_BCCNByMaBCCN: async (_, { MaBaoCaoCongNo }) => {
+            try {
+                const res = await CT_BCCN.findAll({
+                    where: {
+                        MaBaoCaoCongNo
+                    }
+                })
+                return res;
+            } catch (err) {
+                throw new Error(`Không thể tìm được các chi tiết BCCN.`)
+            }
+        },
         everyCT_BCDSByMaBCDS: async (_, { MaBaoCaoDoanhSo }) => {
             try {
                 const res = await CT_BCDS.findAll({
@@ -193,7 +205,7 @@ const resolvers = {
                 })
                 return res;
             } catch (err) {
-                throw new Error(`Không thể tìm được chi tiết BCDS: ${err}`)
+                throw new Error(`Không thể tìm được các chi tiết BCDS: ${err}`)
             }
         },
         everyMatHangByArrOfMaMatHang: async (_, { MaMatHangArr }) => {
@@ -627,13 +639,17 @@ const resolvers = {
             }
         },
         accumulateTienNo: async (_, { MaDaiLy, TienNo }) => {
+            if (TienNo < 0) throw new Error('Tiền nợ không được bé hơn 0.')
             try {
+                const daily = await DAILY.findByPk(MaDaiLy)
+                if (!daily) throw new Error('Không tìm thấy đại lý!')
+                if (TienNo === 0) return daily
+
                 // Ghi nhận việc đại lý bị nợ vào phiếu ghi nợ
                 const newPhieuGhiNo = PHIEUGHINO.create({ MaDaiLy, SoTienNo: TienNo })
                 if (!newPhieuGhiNo) throw new Error('Không thể tạo được phiếu ghi nợ!')
+
                 // Tăng tiền nợ của đại lý
-                const daily = await DAILY.findByPk(MaDaiLy)
-                if (!daily) throw new Error('Không tìm thấy đại lý!')
                 const tienNoMoi = daily.TienNo + TienNo;
                 await DAILY.update(
                     { TienNo: tienNoMoi },
@@ -771,12 +787,13 @@ const resolvers = {
             }
         },
         addBaocaocongno: async (_, { Thang }) => {
+            const parsedDate = moment(Thang, 'YYYY-MM-DD').toDate();
             try {
-                const newLoaidaily = await BAOCAOCONGNO.create({ Thang });
+                const newLoaidaily = await BAOCAOCONGNO.create({ Thang: parsedDate });
                 return newLoaidaily;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error(`Failed to add BAOCAOCONGNO: ${error}`);
+                throw new Error(`Không thể thêm báo cáo công nợ mới.`);
             }
         },
         updateBaocaocongno: async (_, args) => {
@@ -809,12 +826,107 @@ const resolvers = {
             }
         },
         addCt_bccn: async (_, args) => {
+            const { MaBaoCaoCongNo, MaDaiLy } = args;
             try {
-                const newLoaidaily = await CT_BCCN.create(args);
-                return newLoaidaily;
+
+                // Lay ra bao cao cong no co Id la MaBaoCaoCongNo de lay duoc Thang
+                const baocaocongno = await BAOCAOCONGNO.findOne({ where: { MaBaoCaoCongNo } });
+
+                if (!baocaocongno) {
+                    throw new Error(`Không thể tìm thấy được báo cáo doanh số với mã báo cáo doanh số bạn cung cấp.`);
+                }
+
+                const startDate = moment(baocaocongno.dataValues.Thang).startOf('month').toDate();
+                const endDate = moment(baocaocongno.dataValues.Thang).endOf('month').toDate();
+
+                const startDateOfPrevMonth = moment(baocaocongno.dataValues.Thang).subtract(1, 'months').startOf('month').toDate();
+                const endDateOfPrevMonth = moment(baocaocongno.dataValues.Thang).subtract(1, 'months').endOf('month').toDate();
+
+
+                // Xu ly logic tinh toan NoDau, PhatSinh, NoCuoi:
+                let noDau = 0;
+                let phatSinh = 0;
+                let noCuoi = 0;
+                let noDuocTra = 0
+                // Lay ra tat ca PHIEUTHUTIEN, PHIEUGHINO co Thang nam trong baocaocongno.Thang, MaDaiLy = MaDaiLy
+
+                // Lay ra CT_BCCN gan voi cuoi thang nhat cua dai ly trong thang truoc do
+                // de lay du lieu no cuoi lam no dau cho ct_bccn moi
+                const prevCT_BCCN = await CT_BCCN.findOne({
+                    where: {
+                        MaDaiLy,
+                    },
+                    include: [
+                        {
+                            model: BAOCAOCONGNO,
+                            as: 'MaBaoCaoCongNo_BAOCAOCONGNO',
+                            where: {
+                                Thang: {
+                                    [Op.between]: [startDateOfPrevMonth, endDateOfPrevMonth]
+                                }
+                            }
+                        }
+                    ],
+                    order: [[{ model: BAOCAOCONGNO, as: 'MaBaoCaoCongNo_BAOCAOCONGNO' }, 'Thang', 'DESC']],
+                    limit: 1
+                });
+
+                // Nợ đầu của thàng này là nợ cuối của tháng trước
+                if (prevCT_BCCN) {
+                    noDau = prevCT_BCCN.dataValues.NoCuoi;
+                }
+
+                // const phieuThuTienArr = await PHIEUTHUTIEN.findAll({
+                //     where: {
+                //         MaDaiLy,
+                //         NgayThuTien: { [Op.between]: [startDate, endDate] },
+                //     },
+                // });
+
+                // const phieuGhiNoArr = await PHIEUGHINO.findAll({
+                //     where: {
+                //         MaDaiLy,
+                //         NgayLapPhieu: { [Op.between]: [startDate, endDate] },
+                //     },
+                // });
+
+                const phieuThuTienSum = await PHIEUTHUTIEN.sum('SoTienThu', {
+                    where: {
+                        MaDaiLy,
+                        NgayThuTien: { [Op.between]: [startDate, endDate] },
+                    },
+                });
+
+                const phieuGhiNoSum = await PHIEUGHINO.sum('SoTienNo', {
+                    where: {
+                        MaDaiLy,
+                        NgayLapPhieu: { [Op.between]: [startDate, endDate] },
+                    },
+                });
+
+                if (phieuGhiNoSum) {
+                    phatSinh = phieuGhiNoSum;
+                }
+
+                if (phieuThuTienSum) {
+                    noDuocTra = phieuThuTienSum;
+                }
+
+                //Tính phát sinh là tổng các thuộc tính SoTienNo của tất cả phiếu ghi nợ của đại lý trong tháng này.
+                // if (phieuGhiNoArr.length > 0)
+                //     phatSinh = phieuGhiNoArr.reduce((sum, phieuGhiNo) => sum + phieuGhiNo.dataValues.SoTienNo, 0)
+
+                // if (phieuThuTienArr.length > 0)
+                //     noDuocTra = phieuThuTienArr.reduce((sum, phieuThuTien) => sum + phieuThuTien.dataValues.SoTienThu, 0)
+
+                // Tính nợ cuố: Nợ đầu + phát sinh - tổng số tiền mà đại lý trả được(Tổng giá trị của phiếu thu tiền của các đại lý trong tháng)
+                noCuoi = noDau + phatSinh - noDuocTra;
+
+                const newCT_BCCN = await CT_BCCN.create({ NoDau: noDau, PhatSinh: phatSinh, NoCuoi: noCuoi, ...args });
+                return newCT_BCCN;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Failed to add CT_BCCN')
+                throw new Error('Không thể thêm chi tiết báo cáo công nợ mới.')
             }
         },
         updateCt_bccn: async (_, args) => {
@@ -1149,7 +1261,7 @@ const resolvers = {
                 return newBaocaodoanhso;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error(`Failed to add BAOCAODOANHSO: ${error}`);
+                throw new Error(`Không thể thêm báo cáo doanh số mới`);
             }
         },
         updateBaocaodoanhso: async (_, args) => {
@@ -1192,8 +1304,8 @@ const resolvers = {
                     throw new Error(`Không thể tìm thấy được báo cáo doanh số với mã báo cáo doanh số bạn cung cấp.`);
                 }
 
-                const startDate = moment(baocaodoanhso.Thang).startOf('month').toDate();
-                const endDate = moment(baocaodoanhso.Thang).endOf('month').toDate();
+                const startDate = moment(baocaodoanhso.dataValues.Thang).startOf('month').toDate();
+                const endDate = moment(baocaodoanhso.dataValues.Thang).endOf('month').toDate();
 
                 // Xu ly logic tinh toan TyLe, SoPhieuXuat, TongTriGia:
                 // Lay ra tat ca PhieuXuatHang co Thang nam trong baocaodoanhso.Thang, MaDaiLy = MaDaiLy

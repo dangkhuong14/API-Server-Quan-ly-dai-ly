@@ -125,6 +125,7 @@ const typeDefs = gql`
   }
 
   type Query {
+    everyCT_BCCNByMaBCCN(MaBaoCaoCongNo: ID!): [Ct_bccn]
     everyCT_BCDSByMaBCDS(MaBaoCaoDoanhSo: ID!): [Ct_bcds]
 
     everyMatHangByArrOfMaMatHang(MaMatHangArr: [ID!]! ): [Mathang]
@@ -233,7 +234,7 @@ const typeDefs = gql`
     updateBaocaocongno(MaBaoCaoCongNo: ID!, Thang: String!): Baocaocongno
     deleteBaocaocongno(MaBaoCaoCongNo: ID!): Baocaocongno
 
-    addCt_bccn(MaBaoCaoCongNo: ID!, MaDaiLy: ID!, NoDau: Int!, PhatSinh: Int!, NoCuoi: Int!): Ct_bccn
+    addCt_bccn(MaBaoCaoCongNo: ID!, MaDaiLy: ID!): Ct_bccn
     updateCt_bccn(MaCT_BCCN: ID!, MaBaoCaoCongNo: ID!, MaDaiLy: ID!, NoDau: Int!, PhatSinh: Int!, NoCuoi: Int!): Ct_bccn
     deleteCt_bccn(MaCT_BCCN: ID!): Ct_bccn
   }`
