@@ -13,6 +13,7 @@ import PHIEUNHAPHANG from "./PHIEUNHAPHANG.js";
 import PHIEUTHUTIEN from "./PHIEUTHUTIEN.js";
 import PHIEUXUATHANG from "./PHIEUXUATHANG.js";
 import QUAN from "./QUAN.js";
+import PHIEUGHINO from "./PHIEUGHINO.js";
 
 const initModels = (sequelize, DataTypes) => {
   const BAOCAOCONGNOModel = BAOCAOCONGNO(sequelize, DataTypes);
@@ -28,6 +29,7 @@ const initModels = (sequelize, DataTypes) => {
   const PHIEUTHUTIENModel = PHIEUTHUTIEN(sequelize, DataTypes);
   const PHIEUXUATHANGModel = PHIEUXUATHANG(sequelize, DataTypes);
   const QUANModel = QUAN(sequelize, DataTypes);
+  const PHIEUGHINOModel = PHIEUGHINO(sequelize, DataTypes);
 
   CT_BCCNModel.belongsTo(BAOCAOCONGNOModel, { as: "MaBaoCaoCongNo_BAOCAOCONGNO", foreignKey: "MaBaoCaoCongNo" });
   BAOCAOCONGNOModel.hasMany(CT_BCCNModel, { as: "CT_BCCNs", foreignKey: "MaBaoCaoCongNo" });
@@ -53,6 +55,8 @@ const initModels = (sequelize, DataTypes) => {
   PHIEUXUATHANGModel.hasMany(CT_PHIEUXUATHANGModel, { as: "CT_PHIEUXUATHANGs", foreignKey: "MaPhieuXuat" });
   DAILYModel.belongsTo(QUANModel, { as: "MaQuan_QUAN", foreignKey: "MaQuan" });
   QUANModel.hasMany(DAILYModel, { as: "DAILies", foreignKey: "MaQuan" });
+  PHIEUGHINOModel.belongsTo(DAILYModel, { as: "MaDaiLy_DAILY", foreignKey: "MaDaiLy" });
+  DAILYModel.hasMany(PHIEUGHINOModel, { as: "PHIEUGHINOs", foreignKey: "MaDaiLy" });
 
   return {
     BAOCAOCONGNO: BAOCAOCONGNOModel,
@@ -68,6 +72,7 @@ const initModels = (sequelize, DataTypes) => {
     PHIEUTHUTIEN: PHIEUTHUTIENModel,
     PHIEUXUATHANG: PHIEUXUATHANGModel,
     QUAN: QUANModel,
+    PHIEUGHINO: PHIEUGHINOModel,
   };
 };
 
