@@ -628,8 +628,12 @@ const resolvers = {
         },
         accumulateTienNo: async (_, { MaDaiLy, TienNo }) => {
             try {
+                // Ghi nhận việc đại lý bị nợ vào phiếu ghi nợ
+                const newPhieuGhiNo = PHIEUGHINO.create({ MaDaiLy, SoTienNo: TienNo })
+                if (!newPhieuGhiNo) throw new Error('Không thể tạo được phiếu ghi nợ!')
+                // Tăng tiền nợ của đại lý
                 const daily = await DAILY.findByPk(MaDaiLy)
-                if (!daily) throw new Error('Không tìm thấy đại lý')
+                if (!daily) throw new Error('Không tìm thấy đại lý!')
                 const tienNoMoi = daily.TienNo + TienNo;
                 await DAILY.update(
                     { TienNo: tienNoMoi },
@@ -638,7 +642,7 @@ const resolvers = {
                 const dailyafterupdate = DAILY.findByPk(MaDaiLy)
                 return dailyafterupdate
             } catch (err) {
-                throw new Error(`Không thể cập nhật tiền nợ cho đại lý, ${err}`)
+                throw new Error(`Không thể cập nhật tiền nợ cho đại lý vì: ${err}`)
             }
         },
         calculateTyLe: async (_, { MaBaoCaoDoanhSo }) => {
