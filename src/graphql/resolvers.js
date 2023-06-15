@@ -915,8 +915,6 @@ const resolvers = {
         addPhieunhaphang: async (_, args) => {
             const { MaMatHang, SoLuong } = args
             try {
-                const newPhieunhaphang = await PHIEUNHAPHANG.create(args);
-
                 // Thay doi so luong voi mat hang tuong ung
                 const mathang = await MATHANG.findByPk(MaMatHang)
                 if (!mathang) throw new Error(`Không thể tìm thấy mặt hàng!`)
@@ -926,10 +924,12 @@ const resolvers = {
                     { SoLuongTon: newSoLuong },
                     { where: { MaMatHang } }
                 )
+
+                const newPhieunhaphang = await PHIEUNHAPHANG.create(args);
                 return newPhieunhaphang;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error('Không thể thêm phiếu nhập hàng mới!')
+                throw new Error(`Không thể thêm phiếu nhập hàng mới vì: ${error}`)
             }
         },
         updatePhieunhaphang: async (_, args) => {
@@ -1001,24 +1001,17 @@ const resolvers = {
         },
         addPhieuxuathang: async (_, args) => {
             const { NgayLapPhieu } = args;
-            let newPhieuXuatHang
-
-            // Chuyển đổi giá trị timestamp từ dạng string sang dạng timestamp
-            const convertedTimestamp = moment(NgayLapPhieu).toDate();
 
             try {
-                // Kiểm tra nếu phía client cung cấp giá trị cho NgayLapPhieu
-                if (NgayLapPhieu) {
-                    newPhieuXuatHang = await PHIEUXUATHANG.create({ NgayLapPhieu: convertedTimestamp, ...args });
-                    return newPhieuXuatHang;
-                } else {
-                    newPhieuXuatHang = await PHIEUXUATHANG.create(args);
-                    return newPhieuXuatHang;
-                }
+                // Chuyển đổi giá trị timestamp từ dạng string sang dạng timestamp
+                const convertedTimestamp = NgayLapPhieu ? moment(NgayLapPhieu).toDate() : undefined;
+
+                const newPhieuXuatHang = await PHIEUXUATHANG.create({ NgayLapPhieu: convertedTimestamp, ...args });
+                return newPhieuXuatHang;
 
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error(`Failed to add PHIEUXUATHANG: ${error}`)
+                throw new Error(`Không thể tạo phiếu xuất hàng mới!`)
             }
         },
         updatePhieuxuathang: async (_, args) => {
@@ -1051,12 +1044,25 @@ const resolvers = {
             }
         },
         addCt_phieuxuathang: async (_, args) => {
+            const { MaMatHang, SoLuongXuat } = args
             try {
+                // Thay doi so luong voi mat hang tuong ung
+                const mathang = await MATHANG.findByPk(MaMatHang)
+                if (!mathang) throw new Error(`Không thể tìm thấy mặt hàng!`)
+                // Kiem tra so luong ton cua mat hang sau khi xuat co be hon 0 hay khong
+                const soLuongTonSauXuat = mathang.dataValues.SoLuongTon - SoLuongXuat;
+                if (soLuongTonSauXuat < 0) throw new Error(`Số lượng hàng được xuất phải nhỏ hơn hoặc bằng số lượng hàng tồn kho của mặt hàng`)
+
+                await MATHANG.update(
+                    { SoLuongTon: soLuongTonSauXuat },
+                    { where: { MaMatHang } }
+                )
+
                 const newCt_phieuxuathang = await CT_PHIEUXUATHANG.create(args);
                 return newCt_phieuxuathang;
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error(`Không thể thêm chi tiết phiếu xuất hàng mới: ${error}`)
+                throw new Error(`Không thể thêm chi tiết phiếu xuất hàng mới vì: ${error}`)
             }
         },
         updateCt_phieuxuathang: async (_, args) => {
