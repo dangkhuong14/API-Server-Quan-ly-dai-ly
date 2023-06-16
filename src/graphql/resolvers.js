@@ -1408,7 +1408,7 @@ const resolvers = {
 
             } catch (error) {
                 console.log('Error: ', error);
-                throw new Error(`Failed to add PHIEUTHUTIEN: ${error}`)
+                throw new Error(`Không thể thêm phiếu thu tiền vì: ${error}`)
             }
         },
         updatePhieuthutien: async (_, args) => {
