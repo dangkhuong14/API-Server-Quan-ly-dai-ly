@@ -101,9 +101,9 @@ const typeDefs = gql`
     relatedBaocaocongno: Baocaocongno
     MaDaiLy: ID!
     relatedDaily: Daily
-    NoDau: Int!
-    PhatSinh: Int!
-    NoCuoi: Int!
+    NoDau: Float!
+    PhatSinh: Float!
+    NoCuoi: Float!
   }
 
   type Phieughino {
@@ -235,7 +235,7 @@ const typeDefs = gql`
     deleteBaocaocongno(MaBaoCaoCongNo: ID!): Baocaocongno
 
     addCt_bccn(MaBaoCaoCongNo: ID!, MaDaiLy: ID!): Ct_bccn
-    updateCt_bccn(MaCT_BCCN: ID!, MaBaoCaoCongNo: ID!, MaDaiLy: ID!, NoDau: Int!, PhatSinh: Int!, NoCuoi: Int!): Ct_bccn
+    updateCt_bccn(MaCT_BCCN: ID!, MaBaoCaoCongNo: ID!, MaDaiLy: ID!, NoDau: Float!, PhatSinh: Float!, NoCuoi: Float!): Ct_bccn
     deleteCt_bccn(MaCT_BCCN: ID!): Ct_bccn
   }`
 
