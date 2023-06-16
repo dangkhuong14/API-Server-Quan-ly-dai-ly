@@ -1378,13 +1378,14 @@ const resolvers = {
             }
         },
         addPhieuthutien: async (_, args) => {
-            const { NgayThuTien } = args;
+            const { NgayThuTien, SoTienThu } = args;
             let newPhieuThuTien
 
             // Chuyển đổi giá trị timestamp từ dạng string sang dạng timestamp
             const convertedTimestamp = moment(NgayThuTien).toDate();
 
             try {
+                if (SoTienThu <= 0) throw new Error(`Không thể thêm phiếu thu tiền với số tiền thu bé hơn hoặc bằng 0.`)
                 // Kiểm tra nếu phía client cung cấp giá trị cho NgayThuTien
                 if (NgayThuTien) {
                     newPhieuThuTien = await PHIEUTHUTIEN.create({ NgayThuTien: convertedTimestamp, ...args });
