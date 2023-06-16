@@ -617,21 +617,13 @@ const resolvers = {
 
     Mutation: {
         addPhieughino: async (_, args) => {
-            const { NgayLapPhieu, MaDaiLy, SoTienNo } = args;
+            const { NgayLapPhieu } = args;
             let newPhieuGhiNo
 
             // Chuyển đổi giá trị timestamp từ dạng string sang dạng timestamp
             const convertedTimestamp = moment(NgayLapPhieu).toDate();
 
             try {
-                const daily = await DAILY.findByPk(MaDaiLy)
-                if (!daily) throw new Error('Không tìm thấy đại lý')
-
-                const loaidaily = await LOAIDAILY.findByPk(daily.dataValues.MaLoaiDaiLy)
-                if (!loaidaily) throw new Error('Không tìm thấy loại đại lý')
-
-                if ((daily.dataValues.TienNo + SoTienNo) > loaidaily.dataValues.SoNoToiDa) throw new Error('Không thể ghi thêm nợ cho đại lý này vì tiền nợ sẽ vượt quá tiền nợ tối đa của loại đại lý.')
-                // Kiểm tra nếu phía client cung cấp giá trị cho NgayLapPhieu
                 if (NgayLapPhieu) {
                     newPhieuGhiNo = await PHIEUGHINO.create({ NgayLapPhieu: convertedTimestamp, ...args });
                     return newPhieuGhiNo;
@@ -650,6 +642,13 @@ const resolvers = {
             try {
                 const daily = await DAILY.findByPk(MaDaiLy)
                 if (!daily) throw new Error('Không tìm thấy đại lý!')
+
+                const loaidaily = await LOAIDAILY.findByPk(daily.dataValues.MaLoaiDaiLy)
+                if (!loaidaily) throw new Error('Không tìm thấy loại đại lý')
+
+                if ((daily.dataValues.TienNo + TienNo) > loaidaily.dataValues.SoNoToiDa) throw new Error('Không thể ghi thêm nợ cho đại lý này vì tiền nợ sẽ vượt quá tiền nợ tối đa của loại đại lý.')
+                // Kiểm tra nếu phía client cung cấp giá trị cho NgayLapPhieu
+
                 if (TienNo === 0) return daily
 
                 // Ghi nhận việc đại lý bị nợ vào phiếu ghi nợ
