@@ -1081,6 +1081,7 @@ const resolvers = {
         addPhieunhaphang: async (_, args) => {
             const { MaMatHang, SoLuong } = args
             try {
+                if (SoLuong <= 0) throw new Error('Không thể lập phiếu nhập hàng với số lượng nhập vào bé hơn hoặc bằng 0')
                 // Thay doi so luong voi mat hang tuong ung
                 const mathang = await MATHANG.findByPk(MaMatHang)
                 if (!mathang) throw new Error(`Không thể tìm thấy mặt hàng!`)
@@ -1212,6 +1213,7 @@ const resolvers = {
         addCt_phieuxuathang: async (_, args) => {
             const { MaMatHang, SoLuongXuat } = args
             try {
+                if (SoLuong <= 0) throw new Error('Không thể lập chi tiết phiếu xuất hàng với số lượng xuất bằng hoặc bé hơn 0.')
                 // Thay doi so luong voi mat hang tuong ung
                 const mathang = await MATHANG.findByPk(MaMatHang)
                 if (!mathang) throw new Error(`Không thể tìm thấy mặt hàng!`)
