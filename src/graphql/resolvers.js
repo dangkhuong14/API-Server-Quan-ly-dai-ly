@@ -700,39 +700,50 @@ const resolvers = {
             }
         },
         updateThamso: async (_, args) => {
-            const { SoLuongLoaiDaiLy, SoDaiLyToiDaTrongQuan, SoLuongMatHang, SoLuongDVT,
-                SoTienThuKhongVuotQuaSoTienDaiLyDangNo, TyLeDonGiaXuat } = args;
+            try {
+                const { SoLuongLoaiDaiLy, SoDaiLyToiDaTrongQuan, SoLuongMatHang, SoLuongDVT,
+                    SoTienThuKhongVuotQuaSoTienDaiLyDangNo, TyLeDonGiaXuat } = args;
 
-            let updateQuery = 'UPDATE THAMSO SET ';
-            const updateFields = [];
+                if ((SoLuongLoaiDaiLy || SoDaiLyToiDaTrongQuan || SoLuongMatHang || SoLuongDVT || TyLeDonGiaXuat) <= 0)
+                    throw new Error(`Tham số này không được bé hơn hoặc bằng 0`)
 
-            if (SoLuongLoaiDaiLy !== undefined) {
-                updateFields.push(`SoLuongLoaiDaiLy = ${SoLuongLoaiDaiLy}`);
-            }
-            if (SoDaiLyToiDaTrongQuan !== undefined) {
-                updateFields.push(`SoDaiLyToiDaTrongQuan = ${SoDaiLyToiDaTrongQuan}`);
-            }
-            if (SoLuongMatHang !== undefined) {
-                updateFields.push(`SoLuongMatHang = ${SoLuongMatHang}`);
-            }
-            if (SoLuongDVT !== undefined) {
-                updateFields.push(`SoLuongDVT = ${SoLuongDVT}`);
-            }
-            if (SoTienThuKhongVuotQuaSoTienDaiLyDangNo !== undefined) {
-                updateFields.push(`SoTienThuKhongVuotQuaSoTienDaiLyDangNo = ${SoTienThuKhongVuotQuaSoTienDaiLyDangNo}`);
-            }
-            if (TyLeDonGiaXuat !== undefined) {
-                updateFields.push(`TyLeDonGiaXuat = ${TyLeDonGiaXuat}`);
-            }
+                if (SoTienThuKhongVuotQuaSoTienDaiLyDangNo !== 0 && SoTienThuKhongVuotQuaSoTienDaiLyDangNo !== 1) {
+                    throw new Error('Số tiền thu không được vượt quá số tiền đại lý đang nợ chỉ có thể nhận giá trị 0 hoặc 1. Chọn 0 để tắt điều kiện này, chọn 1 để bật.');
+                }
 
-            if (updateFields.length === 0) {
-                throw new Error('Không có tham số nào để cập nhật.');
-            }
+                let updateQuery = 'UPDATE THAMSO SET ';
+                const updateFields = [];
 
-            updateQuery += updateFields.join(', ');
-            await pool.query(updateQuery)
-            const res = await pool.query('SELECT * FROM THAMSO')
-            return res[0][0]
+                if (SoLuongLoaiDaiLy !== undefined) {
+                    updateFields.push(`SoLuongLoaiDaiLy = ${SoLuongLoaiDaiLy}`);
+                }
+                if (SoDaiLyToiDaTrongQuan !== undefined) {
+                    updateFields.push(`SoDaiLyToiDaTrongQuan = ${SoDaiLyToiDaTrongQuan}`);
+                }
+                if (SoLuongMatHang !== undefined) {
+                    updateFields.push(`SoLuongMatHang = ${SoLuongMatHang}`);
+                }
+                if (SoLuongDVT !== undefined) {
+                    updateFields.push(`SoLuongDVT = ${SoLuongDVT}`);
+                }
+                if (SoTienThuKhongVuotQuaSoTienDaiLyDangNo !== undefined) {
+                    updateFields.push(`SoTienThuKhongVuotQuaSoTienDaiLyDangNo = ${SoTienThuKhongVuotQuaSoTienDaiLyDangNo}`);
+                }
+                if (TyLeDonGiaXuat !== undefined) {
+                    updateFields.push(`TyLeDonGiaXuat = ${TyLeDonGiaXuat}`);
+                }
+
+                if (updateFields.length === 0) {
+                    throw new Error('Không có tham số nào để cập nhật.');
+                }
+
+                updateQuery += updateFields.join(', ');
+                await pool.query(updateQuery)
+                const res = await pool.query('SELECT * FROM THAMSO')
+                return res[0][0]
+            } catch (e) {
+                throw new Error(`Không cập nhật tham số được vì: ${e.message}`)
+            }
         },
         addDaily: async (_, args) => {
             const { NgayTiepNhan, MaQuan } = args;
